@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>404 — Yomna Bouallegue</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;1,700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#fef6f8;font-family:'Outfit',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.blobs{position:fixed;inset:0;pointer-events:none;}
+.b{position:absolute;border-radius:50%;filter:blur(80px);opacity:.25;}
+.b1{width:500px;height:500px;background:radial-gradient(circle,#ffb3c6,transparent 70%);top:-150px;right:-100px;}
+.b2{width:400px;height:400px;background:radial-gradient(circle,#c9b1ff,transparent 70%);bottom:-100px;left:-80px;}
+.center{text-align:center;position:relative;z-index:1;padding:2rem;}
+.num{font-family:'Cormorant Garamond',serif;font-size:clamp(6rem,20vw,12rem);font-weight:700;font-style:italic;background:linear-gradient(135deg,#e8527a,#9b72cf,#d4a853);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.msg{font-size:1.1rem;color:#a07090;font-weight:300;margin:1rem 0 2.5rem;}
+a{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#e8527a,#9b72cf);color:white;text-decoration:none;padding:.8rem 2rem;border-radius:100px;font-size:13px;font-weight:600;transition:transform .2s,box-shadow .2s;box-shadow:0 8px 25px rgba(232,82,122,.3);}
+a:hover{transform:translateY(-3px);box-shadow:0 14px 35px rgba(232,82,122,.4);}
+</style>
+</head>
+<body>
+<div class="blobs"><div class="b b1"></div><div class="b b2"></div></div>
+<div class="center">
+  <div class="num">404</div>
+  <p class="msg">This page doesn't exist in any cloud region. 🌸</p>
+  <a href="/">← Back to Portfolio</a>
+</div>
+</body>
+</html>
