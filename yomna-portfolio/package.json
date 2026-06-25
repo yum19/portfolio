@@ -30,8 +30,8 @@
     "tailwindcss": "^3.4.19",
     "vite": "^8.1.0"
   },
-  
-  "homepage": "https://yum19.github.io/yomna-portfolio",
+
+  "homepage": "https://yum19.github.io/portfolio",
   "scripts": {
   "predeploy": "npm run build",
   "deploy": "gh-pages -d dist"
