@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { useTheme } from "./App";
 
 /* ══════════════════════════════════════════════════════════════
    ITModels3D.jsx — Midnight Gold palette
@@ -586,6 +587,7 @@ function NeuralNet({ canvasRef, hovered }) {
    CANVAS WRAPPER
 ══════════════════════════════════════════════════════════════ */
 function Model3DCard({ label, sublabel, accent, ModelComponent }) {
+  const { dark, C } = useTheme();
   const canvasRef = useRef(null);
   const hoveredRef = useRef(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -598,12 +600,12 @@ function Model3DCard({ label, sublabel, accent, ModelComponent }) {
         position: "relative",
         borderRadius: 20,
         overflow: "hidden",
-        background: "rgba(8,9,26,0.75)",
-        border: `1px solid ${isHovered ? accent + "66" : accent + "20"}`,
+        background: dark ? "rgba(8,9,26,0.75)" : "rgba(235,229,218,0.92)",
+        border: `1px solid ${isHovered ? accent + "66" : accent + (dark ? "20" : "40")}`,
         boxShadow: isHovered
           ? `0 0 40px ${accent}2e, 0 0 80px ${accent}12`
           : `0 0 20px ${accent}08`,
-        transition: "border-color 0.4s, box-shadow 0.4s",
+        transition: "background 0.4s, border-color 0.4s, box-shadow 0.4s",
         cursor: "grab",
       }}
     >
@@ -628,7 +630,9 @@ function Model3DCard({ label, sublabel, accent, ModelComponent }) {
       <div style={{
         position: "absolute", bottom: 0, left: 0, right: 0,
         padding: "16px 18px",
-        background: "linear-gradient(to top, rgba(8,9,26,0.96) 0%, transparent 100%)",
+        background: dark
+          ? "linear-gradient(to top, rgba(8,9,26,0.96) 0%, transparent 100%)"
+          : "linear-gradient(to top, rgba(235,229,218,0.98) 0%, transparent 100%)",
         zIndex: 2,
       }}>
         <p style={{
@@ -639,13 +643,13 @@ function Model3DCard({ label, sublabel, accent, ModelComponent }) {
           letterSpacing: "0.16em",
           textTransform: "uppercase",
           color: accent,
-          textShadow: `0 0 12px ${accent}77`,
+          textShadow: dark ? `0 0 12px ${accent}77` : "none",
         }}>{label}</p>
         <p style={{
           margin: "3px 0 0",
           fontFamily: "'Inter', sans-serif",
           fontSize: 11,
-          color: "rgba(232,213,160,0.4)",
+          color: C.textMuted,
           letterSpacing: "0.06em",
         }}>{sublabel}</p>
       </div>
@@ -678,6 +682,8 @@ function Model3DCard({ label, sublabel, accent, ModelComponent }) {
    MAIN EXPORT
 ══════════════════════════════════════════════════════════════ */
 export default function ITModels3D() {
+  const { C } = useTheme();
+
   const models = [
     {
       label: "Kubernetes",
@@ -720,7 +726,7 @@ export default function ITModels3D() {
         <h2 style={{
           fontFamily: "'Caveat', cursive",
           fontSize: "clamp(40px, 7vw, 84px)",
-          color: "white",
+          color: C.text,
           lineHeight: 1,
           margin: 0,
         }}>
@@ -732,7 +738,7 @@ export default function ITModels3D() {
           fontSize: 11,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: "rgba(232,213,160,0.3)",
+          color: C.textSub,
           fontFamily: "'Inter', sans-serif",
         }}>
           Hover to interact · built in three.js

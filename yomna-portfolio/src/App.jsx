@@ -1,12 +1,342 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
 import ITModels3D from "./ITModels3D";
+import {
+  SiKubernetes,
+  SiDocker,
+  SiOpenstack,
+  SiAnsible,
+  SiPrometheus,
+  SiGrafana,
+  SiNginx,
+  SiHelm,
+  SiJenkins,
+  SiTraefikproxy,
+  SiReact,
+  SiNodedotjs,
+  SiAngular,
+  SiSpringboot,
+  SiExpress,
+  SiSymfony,
+  SiLaravel,
+  SiFlask,
+  SiFlutter,
+  SiPostgresql,
+  SiRedis,
+  SiMongodb,
+  SiMysql,
+  SiFirebase,
+  SiPython,
+  SiCplusplus,
+  SiPhp,
+  SiTypescript,
+  SiJavascript,
+  SiScikitlearn,
+  SiPandas,
+  SiNumpy,
+  SiGit,
+  SiFigma,
+  SiPostman,
+  SiArduino,
+  SiAnthropic,
+  SiChartdotjs,
+  SiDotnet,
+} from "react-icons/si";
+import { FaLinkedin, FaGithub, FaJava, FaDownload, FaAws } from "react-icons/fa6";
+import { TbBrandCSharp } from "react-icons/tb";
+import { IoMail, IoCall, IoSunny, IoMoon } from "react-icons/io5";
+
+/* ══════════════════════════════════════════════════════════════
+   TRANSLATIONS DICTIONARY (EN & FR)
+══════════════════════════════════════════════════════════════ */
+const TRANSLATIONS = {
+  EN: {
+    nav: {
+      home: "HOME",
+      about: "ABOUT",
+      projects: "PROJECTS",
+      skills: "SKILLS",
+      experience: "EXPERIENCE",
+      contact: "CONTACT",
+      downloadCV: "Download CV",
+      letsTalk: "Let's Talk ↗",
+    },
+    hero: {
+      hi: "Hi, I'm",
+      title1: "Yomna",
+      title2: "Bouallegue",
+      role: "Cloud Computing Engineering Student · ESPRIT (3rd year)",
+      desc1: "I build ",
+      descCloud: "cloud-native",
+      descMid: " systems, ",
+      descFullStack: "full-stack",
+      descAnd: " platforms, and ",
+      descAi: "AI-powered",
+      descEnd: " apps that actually ship.",
+      location: "✦ Tunis, Tunisia · open to internships ♡",
+      exploreBtn: "Explore My Work ↗",
+      downloadCV: "Download CV",
+      terminalSchool: '"ESPRIT – Cloud Computing (3rd year)"',
+      terminalPassion: '"building cloud-native platforms"',
+    },
+    about: {
+      title: "About me ☆",
+      p1_1: "3rd-year ",
+      p1_cloud: "Cloud Computing Engineering",
+      p1_2: " student at ESPRIT Tunis.",
+      p2: "I love building things — from deploying OpenStack private clouds and Kubernetes clusters, to shipping full-stack platforms (Laravel, React, Spring Boot, Node.js, .NET, C#) and integrating AI into real products.",
+      p3: "Also a fantasy fiction enthusiast who believes strong female leads and clean deployments have a lot in common ☕",
+      getInTouch: "Get in touch ↗",
+      statProjects: "Major Projects",
+      statStacks: "Tech Stacks",
+      statInternships: "Internships",
+      statLove: "Love for Code",
+      drivesTitle: "What\ndrives\nme →",
+      note1Title: "Curious", note1Text: "I ask questions and never stop learning.",
+      note2Title: "Builder", note2Text: "From code to cloud — I turn ideas into products.",
+      note3Title: "Cloud",   note3Text: "Cloud-native at heart: K8s, Docker, AWS, OpenStack.",
+      note4Title: "AI-First",note4Text: "I weave AI APIs into every platform I build.",
+    },
+    projects: {
+      title: "Projects",
+      tagline: "Things I've built and shipped ♡",
+      edoraTitle: "Edora LMS",
+      edoraSub: "Analytics Portal for Moodle LMS",
+      edoraDesc: "Built a Laravel 13 API backend & React 19/TypeScript SPA extending Moodle LMS with a separate analytics platform. Implemented Moodle-native auth (Web Services token exchange, Sanctum), scheduled sync jobs to PostgreSQL, and production deployment on Azure K3s with Jenkins CI/CD & Prometheus/Grafana.",
+      edoraBadge: "Edora LMS Internship (2026)",
+      tfakadniTitle: "TFAKADNI",
+      tfakadniSub: "Cloud-Native Maternal Health Platform",
+      tfakadniDesc: "7-node OpenStack private cloud + Kubernetes v1.29 cluster with auto-remediation pipeline for CrashLoopBackOff. Angular + Spring Boot + MySQL with JWT/BCrypt security, Prometheus + Grafana monitoring, and Ingress-nginx.",
+      tfakadniBadge: "Bal des Projets (2025–2026)",
+      fitlifeTitle: "FitLife",
+      fitlifeSub: "Sports & Nutrition Coaching Platform",
+      fitlifeDesc: "Designed and delivered a full sports & nutrition coaching application within 6 weeks during internship at Teck Catalyze. Multi-role React Native mobile app + React.js admin dashboard + secure Node.js REST API on Azure VM with Docker & Nginx.",
+      fitlifeBadge: "Teck Catalyze Internship (2025)",
+      medassistTitle: "MedAssist AI",
+      medassistSub: "Medical Diagnosis Platform using Machine Learning",
+      medassistDesc: "Medical application for early detection of serious diseases: lung cancer, brain tumor, diabetes, depression & anxiety. Trained & benchmarked 6 ML models across 5 datasets. Flask prediction interface with interpretable real-time results.",
+      medassistBadge: "AI / ML (2025–2026)",
+      chronoTitle: "ChronoSerena",
+      chronoSub: "Distributed Medical Platform for Chronic Diseases",
+      chronoDesc: "Distributed medical platform (JavaFX desktop app + Symfony web interface) for managing patients with chronic conditions. MVC architecture, REST APIs, Singleton pattern & reactive data validation.",
+      chronoBadge: "Full-Stack (2024–2025)",
+      brushTitle: "Brush & Bargain",
+      brushSub: "Mobile Art Sales & Exhibition App",
+      brushDesc: "Cross-platform mobile app (FlutterFlow) for buying, selling and showcasing artworks, featuring event management, bookings, and a customer claims module.",
+      brushBadge: "Mobile App (2024–2025)",
+      agroTitle: "AgroDesk",
+      agroSub: "Agricultural Management Desktop App + Arduino System",
+      agroDesc: "OOP C++ desktop application with Qt Designer for farm management, integrated with an Arduino module for automated animal feeding scheduling (servo motor, push button).",
+      agroBadge: "Desktop + Embedded (2023–2024)",
+      bankTitle: "Banking Security System",
+      bankSub: "PIC16F877 Microcontroller Security System",
+      bankDesc: "Embedded banking security system on PIC16F877 monitoring gas and temperature sensors, with automatic alarm triggers and an EEPROM incident log for security agents.",
+      bankBadge: "Embedded Systems (2023–2024)",
+      aryamTitle: "Aryam",
+      aryamSub: "2D Narrative Video Game (SDL / C)",
+      aryamDesc: "Narrative 2D game in C/SDL where heroine Aryam fights depression during Covid-19 lockdown, featuring custom game loop, sprite rendering and collision detection.",
+      aryamBadge: "Game Dev (2022–2023)",
+      kadamniTitle: "KADAMNI",
+      kadamniSub: "Web Recruitment Platform",
+      kadamniDesc: "Full recruitment website covering job posting, application management, and administration of employer and candidate accounts built with PHP and MySQL.",
+      kadamniBadge: "Web Project (2023–2024)",
+    },
+    skills: {
+      title: "Skills",
+      tagline: "Tools I build with every day ✦",
+      g1Label: "Cloud & DevOps", g1Tagline: "My primary focus",
+      g2Label: "Full-Stack & Web/Mobile", g2Tagline: "What I build every day",
+      g3Label: "Languages & Databases", g3Tagline: "The foundation layer",
+      g4Label: "Machine Learning & Tools", g4Tagline: "AI models & workflow",
+    },
+    experience: {
+      title: "Experience",
+      tagline: "Real-world work",
+      eduTitle: "Education",
+      eduTagline: "Academic background",
+      exp1Tag: "Professional Experience",
+      exp1Title: "Intern — Full-Stack Developer",
+      exp1Sub: "Edora LMS · Analytics Portal for Moodle LMS",
+      exp1Text: "Built a Laravel 13 API backend & React 19/TypeScript SPA extending Moodle LMS with a separate analytics platform. Implemented Moodle-native auth (Web Services, Sanctum), scheduled PostgreSQL sync jobs, and deployed to production on Azure K3s with Traefik, cert-manager TLS, Jenkins CI/CD, and Prometheus/Grafana.",
+      exp2Tag: "Professional Experience",
+      exp2Title: "Intern — Full-Stack Developer",
+      exp2Sub: "Teck Catalyze · FitLife Platform",
+      exp2Text: "Designed and delivered a full sports & nutrition coaching app in 6 weeks. Built a multi-role React Native mobile app, React.js admin dashboard, and secure Node.js/Express REST API. Deployed full stack on Azure Linux VM with Docker & Nginx.",
+      edu1Tag: "Engineering Degree",
+      edu1Title: "Cloud Computing Engineering (3rd year)",
+      edu1Sub: "ESPRIT, Tunis",
+      edu1Text: "Hands-on curriculum in cloud-native infrastructure, DevOps automation, full-stack development, AI integrations, and systems programming. Building real-world projects every semester.",
+      edu2Tag: "Secondary Education",
+      edu2Title: "Scientific Baccalaureate",
+      edu2Sub: "",
+      edu2Text: "Graduated with a scientific baccalaureate — the foundation for engineering studies.",
+    },
+    contact: {
+      title: "Let's Connect ",
+      tagline: "Let's build something amazing together.",
+      cardTitle: "Let's build\nsomething\nremarkable.",
+      cardSub: "open to opportunities · 2026",
+      statProjects: "PROJECTS",
+      statInternships: "INTERNSHIPS",
+      statDrive: "DRIVE",
+      strangerText: "Don't be a stranger ⌁♡",
+    },
+    footer: {
+      slogan: "Build. Deploy. Impact. ♡",
+      thanks: "Thanks for stopping by ✦",
+    }
+  },
+  FR: {
+    nav: {
+      home: "ACCUEIL",
+      about: "À PROPOS",
+      projects: "PROJETS",
+      skills: "COMPÉTENCES",
+      experience: "EXPÉRIENCE",
+      contact: "CONTACT",
+      downloadCV: "Télécharger CV",
+      letsTalk: "Me contacter ↗",
+    },
+    hero: {
+      hi: "Bonjour, je suis",
+      title1: "Yomna",
+      title2: "Bouallegue",
+      role: "Étudiante Ingénieure Cloud Computing · ESPRIT (3e année)",
+      desc1: "Je conçois des systèmes ",
+      descCloud: "cloud-native",
+      descMid: ", des plateformes ",
+      descFullStack: "full-stack",
+      descAnd: " et des applications ",
+      descAi: "propulsées par l'IA",
+      descEnd: " en production.",
+      location: "✦ Tunis, Tunisie · disponible pour un stage ♡",
+      exploreBtn: "Explorer mes projets ↗",
+      downloadCV: "Télécharger CV",
+      terminalSchool: '"ESPRIT – Cycle Ingénieur Cloud (3e année)"',
+      terminalPassion: '"développement & déploiement cloud-native"',
+    },
+    about: {
+      title: "À propos de moi ☆",
+      p1_1: "Étudiante en 3e année du cycle ingénieur en ",
+      p1_cloud: "Cloud Computing",
+      p1_2: " à l'ESPRIT Tunis.",
+      p2: "J'aime concevoir et déployer des infrastructures cloud privé OpenStack et clusters Kubernetes, créer des plateformes full-stack (Laravel, React, Spring Boot, Node.js, .NET, C#) et intégrer l'IA dans des produits concrets.",
+      p3: "Également passionnée de fiction fantastique qui pense que les héroïnes fortes et les déploiements propres ont beaucoup en commun ☕",
+      getInTouch: "Me contacter ↗",
+      statProjects: "Projets Majeurs",
+      statStacks: "Stacks Tech",
+      statInternships: "Stages Pro",
+      statLove: "Passion Code",
+      drivesTitle: "Ce qui\nme motive\n→",
+      note1Title: "Curieuse", note1Text: "J'apprends constamment et je pose les bonnes questions.",
+      note2Title: "Bâtisseuse", note2Text: "Du code au cloud — je transforme les idées en produits.",
+      note3Title: "Cloud-Native", note3Text: "Cloud dans l'âme : K8s, Docker, AWS, OpenStack.",
+      note4Title: "IA-First", note4Text: "J'intègre des API d'IA dans chaque application.",
+    },
+    projects: {
+      title: "Projets",
+      tagline: "Quelques réalisations concrètes ♡",
+      edoraTitle: "Edora LMS",
+      edoraSub: "Portail Analytique pour Moodle LMS",
+      edoraDesc: "Développement d'un backend Laravel 13 et d'une SPA React 19/TypeScript étendant Moodle avec une plateforme analytique dédiée. Authentification native Moodle (tokens Web Services, Sanctum), synchronisation PostgreSQL et déploiement Azure K3s avec Jenkins CI/CD et Prometheus/Grafana.",
+      edoraBadge: "Stage Edora LMS (2026)",
+      tfakadniTitle: "TFAKADNI",
+      tfakadniSub: "Plateforme de Santé Maternelle Cloud-Native",
+      tfakadniDesc: "Cloud privé OpenStack 7 nœuds + cluster Kubernetes v1.29 avec pipeline d'auto-remédiation des erreurs CrashLoopBackOff. Web Angular + Spring Boot + MySQL sécurisé JWT/BCrypt, monitoring Prometheus/Grafana et Ingress-nginx.",
+      tfakadniBadge: "Bal des Projets (2025–2026)",
+      fitlifeTitle: "FitLife",
+      fitlifeSub: "Plateforme de Coaching Sportif & Nutritionnel",
+      fitlifeDesc: "Application complète de coaching conçue et livrée en 6 semaines lors du stage chez Teck Catalyze. App mobile React Native multi-rôles + dashboard admin React.js + API REST Node.js/Express sur Azure Linux VM via Docker & Nginx.",
+      fitlifeBadge: "Stage Teck Catalyze (2025)",
+      medassistTitle: "MedAssist IA",
+      medassistSub: "Plateforme de Diagnostic Médical par Machine Learning",
+      medassistDesc: "Application médicale de détection précoce des maladies graves (cancer du poumon, tumeur cérébrale, diabète, dépression). Entraînement de 6 modèles ML évalués sur 5 datasets. Interface de prédiction Flask en temps réel.",
+      medassistBadge: "IA / ML (2025–2026)",
+      chronoTitle: "ChronoSerena",
+      chronoSub: "Plateforme Médicale Distribuée pour Maladies Chroniques",
+      chronoDesc: "Plateforme médicale distribuée (application desktop JavaFX + interface web Symfony) pour la gestion de patients. Architecture MVC, API REST, design pattern Singleton et validation réactive.",
+      chronoBadge: "Full-Stack (2024–2025)",
+      brushTitle: "Brush & Bargain",
+      brushSub: "Application Mobile de Vente et Exposition d'Art",
+      brushDesc: "Application mobile multiplateforme (FlutterFlow) pour l'achat, la vente et l'exposition d'œuvres d'art, avec gestion d'événements, réservations et module de réclamations.",
+      brushBadge: "App Mobile (2024–2025)",
+      agroTitle: "AgroDesk",
+      agroSub: "Application Desktop de Gestion Agricole + Système Arduino",
+      agroDesc: "Application desktop C++ (POO) avec Qt Designer pour la gestion d'exploitations agricoles, couplée à un module Arduino de planification automatisée de l'alimentation animale (moteur servo, bouton).",
+      agroBadge: "Desktop + Embarqué (2023–2024)",
+      bankTitle: "Système de Sécurité Bancaire",
+      bankSub: "Microcontrôleur PIC16F877 & Capteurs",
+      bankDesc: "Système embarqué de surveillance bancaire (gaz, température) sur PIC16F877 avec déclenchements automatiques d'alarmes et journal des incidents en mémoire EEPROM.",
+      bankBadge: "Systèmes Embarqués (2023–2024)",
+      aryamTitle: "Aryam",
+      aryamSub: "Jeu Vidéo 2D Narratif (SDL / C)",
+      aryamDesc: "Jeu vidéo 2D narratif en C/SDL où l'héroïne Aryam combat la dépression pendant le confinement Covid-19, avec boucle de jeu, gestion de sprites et détection de collisions.",
+      aryamBadge: "Game Dev (2022–2023)",
+      kadamniTitle: "Kadamni",
+      kadamniSub: "Plateforme Web de Recrutement",
+      kadamniDesc: "Site de recrutement complet : publication d'offres, gestion des candidatures et administration des comptes employeurs et candidats développé en PHP et MySQL.",
+      kadamniBadge: "Projet Web (2023–2024)",
+    },
+    skills: {
+      title: "Compétences",
+      tagline: "Outils et technologies utilisés au quotidien ✦",
+      g1Label: "Cloud & DevOps", g1Tagline: "Mon domaine de prédilection",
+      g2Label: "Full-Stack & Web/Mobile", g2Tagline: "Ce que je développe chaque jour",
+      g3Label: "Langages & Bases de Données", g3Tagline: "Le socle technique",
+      g4Label: "Machine Learning & Outils", g4Tagline: "Modèles IA & workflow",
+    },
+    experience: {
+      title: "Expérience",
+      tagline: "Parcours professionnel",
+      eduTitle: "Formation",
+      eduTagline: "Parcours académique",
+      exp1Tag: "Expérience Professionnelle",
+      exp1Title: "Stage — Développeuse Full-Stack",
+      exp1Sub: "Edora LMS · Portail Analytique pour Moodle LMS",
+      exp1Text: "Développement d'un backend Laravel 13 et d'une SPA React 19/TypeScript étendant Moodle avec une plateforme analytique dédiée. Authentification native Moodle (Web Services, Sanctum), synchronisation PostgreSQL et déploiement Azure K3s avec Jenkins CI/CD et Prometheus/Grafana.",
+      exp2Tag: "Expérience Professionnelle",
+      exp2Title: "Stage — Développeuse Full-Stack",
+      exp2Sub: "Teck Catalyze · FitLife Platform",
+      exp2Text: "Conception et livraison d'une application complète de coaching sportif en 6 semaines. App mobile React Native multi-rôles, dashboard admin React.js et API REST Node.js/Express. Déploiement full-stack sur Azure Linux VM via Docker & Nginx.",
+      edu1Tag: "Diplôme d'Ingénieur",
+      edu1Title: "Cycle Ingénieur — Cloud Computing (3e année)",
+      edu1Sub: "ESPRIT, Tunis",
+      edu1Text: "Formation axée sur les infrastructures cloud-native, l'automatisation DevOps, le développement full-stack, l'intégration de l'IA et la programmation système.",
+      edu2Tag: "Enseignement Secondaire",
+      edu2Title: "Baccalauréat Scientifique",
+      edu2Sub: "",
+      edu2Text: "Obtention du baccalauréat scientifique — fondement des études d'ingénieur.",
+    },
+    contact: {
+      title: "Me Contacter ",
+      tagline: "Construisons un projet ensemble.",
+      cardTitle: "Construisons\nquelque chose\nde remarquable.",
+      cardSub: "ouverte aux opportunités · 2026",
+      statProjects: "PROJETS",
+      statInternships: "STAGES",
+      statDrive: "MOTIVATION",
+      strangerText: "N'hésitez pas à me contacter ⌁♡",
+    },
+    footer: {
+      slogan: "Concevoir. Déployer. Impacter. ♡",
+      thanks: "Merci pour votre visite ✦",
+    }
+  }
+};
 
 /* ══════════════════════════════════════════════════════════════
    THEME CONTEXT
 ══════════════════════════════════════════════════════════════ */
-const ThemeContext = createContext({ dark: true, toggle: () => {} });
-const useTheme = () => useContext(ThemeContext);
+const ThemeContext = createContext({
+  dark: true,
+  toggle: () => {},
+  lang: "EN",
+  setLang: () => {},
+  toggleLang: () => {},
+  C: {},
+  t: TRANSLATIONS.EN,
+});
+export const useTheme = () => useContext(ThemeContext);
 
 /* ══════════════════════════════════════════════════════════════
    COLOR PALETTE — Midnight Gold
@@ -33,302 +363,94 @@ const DARK = {
 };
 
 const LIGHT = {
-  gold:       "#c47f10",
-  cyan:       "#2e8fad",
-  ember:      "#c04e20",
-  sage:       "#1f9e5e",
-  champagne:  "#8a6d2e",
-  bg:         "#f5f0e8",
-  surface:    "#ede8df",
-  card:       "#e5dfd5",
+  gold:       "#b8730e",
+  cyan:       "#1b7591",
+  ember:      "#b84318",
+  sage:       "#15824c",
+  champagne:  "#6e5420",
+  bg:         "#faf7f2",
+  surface:    "#f0ebe1",
+  card:       "#e6e0d4",
   text:       "#1a1408",
-  textMuted:  "rgba(26,20,8,0.55)",
-  textSub:    "rgba(26,20,8,0.35)",
-  border:     "rgba(192,126,16,0.2)",
-  gridLine:   "rgba(192,126,16,0.06)",
-  navBg:      "rgba(245,240,232,0.75)",
+  textMuted:  "rgba(26,20,8,0.85)",
+  textSub:    "rgba(26,20,8,0.68)",
+  border:     "rgba(184,115,14,0.30)",
+  gridLine:   "rgba(184,115,14,0.08)",
+  navBg:      "rgba(250,247,242,0.92)",
   glow1:      "#f0a830",
   glow2:      "#5eb8d4",
 };
 
-/* ─── SVG ICONS (real brand logos) ──────────────────────────── */
+/* ─── REAL BRAND LOGO ICONS ─────────────────────────────────── */
 const Icon = {
-  Kubernetes: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28" fill="none">
-      <path d="M16 2.667L3.333 9.333v13.334L16 29.333l12.667-6.666V9.333L16 2.667z" fill="#326CE5"/>
-      <path d="M16 7l-2.5 4.5-5 .5 3.5 3.5-.5 5 4.5-2.5 4.5 2.5-.5-5 3.5-3.5-5-.5L16 7z" fill="white"/>
-    </svg>
-  ),
-  Docker: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#2496ED"/>
-      <path d="M17.5 13h-2v2h2v-2zm-3 0h-2v2h2v-2zm-3 0h-2v2h2v-2zm-3 0h-2v2h2v-2zm9-3h-2v2h2v-2zm-3 0h-2v2h2v-2zm-3 0h-2v2h2v-2zm12 3h-2v2h2v-2zm-3 0h-2v2h2v-2zm1-6h-2v2h2V7z" fill="white"/>
-      <path d="M27.5 15.5s-.5-2-3-2c0 0-1-2-4-2H5s-1 5 2 7c1.5 1 3.5 1 5 1h11c4 0 5-2 5-2s1 0 1-2h-1z" fill="white"/>
-    </svg>
-  ),
-  OpenStack: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#ED1944"/>
-      <rect x="5" y="5" width="9" height="3" rx="1" fill="white"/>
-      <rect x="18" y="5" width="9" height="3" rx="1" fill="white"/>
-      <rect x="5" y="14.5" width="9" height="3" rx="1" fill="white"/>
-      <rect x="18" y="14.5" width="9" height="3" rx="1" fill="white"/>
-      <rect x="5" y="24" width="9" height="3" rx="1" fill="white"/>
-      <rect x="18" y="24" width="9" height="3" rx="1" fill="white"/>
-    </svg>
-  ),
+  Kubernetes: () => <SiKubernetes size={28} color="#326CE5" />,
+  Docker: () => <SiDocker size={28} color="#2496ED" />,
+  OpenStack: () => <SiOpenstack size={28} color="#ED1944" />,
   Azure: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <path d="M16 2L4 28h8l3-6h6l3 6h8L16 2z" fill="#0089D6"/>
-      <path d="M16 8l-5 12h10L16 8z" fill="#50E6FF"/>
+    <svg viewBox="0 0 96 96" width="28" height="28">
+      <path fill="#0089D6" d="M33.6 12L12 79.2h21.6L52.8 12z"/>
+      <path fill="#0072C6" d="M52.8 12L38.4 57.6h28.8z"/>
+      <path fill="#0089D6" d="M38.4 57.6L24 79.2h60L67.2 40.8z"/>
     </svg>
   ),
-  Ansible: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <circle cx="16" cy="16" r="14" fill="#1A1918"/>
-      <path d="M16 5a11 11 0 100 22A11 11 0 0016 5zm4.5 16.5l-7-4.5 5-9 5 14.5h-3z" fill="#EE0000"/>
-    </svg>
-  ),
-  Prometheus: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <circle cx="16" cy="16" r="14" fill="#E6522C"/>
-      <circle cx="16" cy="16" r="5" fill="white"/>
-      <path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.9 6.9l2.8 2.8M22.3 22.3l2.8 2.8M6.9 25.1l2.8-2.8M22.3 9.7l2.8-2.8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  ),
-  Grafana: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#F46800"/>
-      <circle cx="16" cy="16" r="8" fill="none" stroke="white" strokeWidth="2"/>
-      <path d="M12 16h2l2-4 2 8 2-4h2" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  Nginx: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#009639"/>
-      <path d="M7 25V7l9 13.5L25 7v18" stroke="white" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  Helm: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#0F1689"/>
-      <circle cx="16" cy="16" r="7" fill="none" stroke="#277A9F" strokeWidth="2"/>
-      <circle cx="16" cy="16" r="3" fill="#277A9F"/>
-      <path d="M16 5v4M16 23v4M5 16h4M23 16h4" stroke="#277A9F" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  ),
-  React: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <circle cx="16" cy="16" r="3" fill="#61DAFB"/>
-      <ellipse cx="16" cy="16" rx="13" ry="5" fill="none" stroke="#61DAFB" strokeWidth="1.5"/>
-      <ellipse cx="16" cy="16" rx="13" ry="5" fill="none" stroke="#61DAFB" strokeWidth="1.5" transform="rotate(60 16 16)"/>
-      <ellipse cx="16" cy="16" rx="13" ry="5" fill="none" stroke="#61DAFB" strokeWidth="1.5" transform="rotate(120 16 16)"/>
-    </svg>
-  ),
-  NodeJS: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <path d="M16 3L4 9.5v13L16 29l12-6.5v-13L16 3z" fill="#339933"/>
-      <path d="M16 7v14M10 10.5l6 3.5 6-3.5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-    </svg>
-  ),
-  Angular: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <path d="M16 3L4 7l2 17 10 5 10-5 2-17L16 3z" fill="#DD0031"/>
-      <path d="M16 3v26" stroke="#C3002F" strokeWidth="1"/>
-      <path d="M11 20l5-12 5 12M13 17h6" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round"/>
-    </svg>
-  ),
-  SpringBoot: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <circle cx="16" cy="16" r="13" fill="#6DB33F"/>
-      <path d="M10 22C8 19 8 13 12 10c-1 3 0 6 3 7-1-2 0-5 2-6 0 4 3 7 2 11-1 2-4 3-6 2-1 0-2-2-3-4z" fill="white"/>
-    </svg>
-  ),
-  Express: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#404040"/>
-      <text x="5" y="21" fontFamily="monospace" fontWeight="bold" fontSize="11" fill="white">Ex</text>
-    </svg>
-  ),
-  Symfony: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#1A171B"/>
-      <path d="M16.5 7C11.5 7 8 10.5 8 15.5c0 4.4 3 8 7.5 8.5 4.5.5 8.5-2.5 9-7 .5-3.5-1.5-6.5-5-7.5 2 1 3 3 2.7 5-.3 1.5-1.5 2.5-3 2.5-1 0-1.7-.7-1.5-1.5.1-.4.4-.7.7-.7.6 0 1 .5.8 1.1.4-.1.7-.5.8-1 .2-1.2-.5-2.3-1.7-2.5-1.8-.3-3.5 1-3.8 2.8-.4 2 1 3.8 3 4 1.5.2 3-.5 3.8-1.8.9-1.5.7-3.3-.5-4.5 2 .7 3 2.5 2.8 4.5-.3 2.5-2.5 4.3-5 4.2-3-.1-5.2-2.7-5-5.7.2-2.5 2.2-4.5 4.7-4.5.8 0 1.5.2 2.2.5C18.5 8.2 17 7 15 7h1.5z" fill="white"/>
-    </svg>
-  ),
-  MongoDB: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#13AA52"/>
-      <path d="M16 4c0 0-6 8-6 14a6 6 0 0012 0C22 12 16 4 16 4z" fill="white"/>
-      <path d="M16 28V16" stroke="#13AA52" strokeWidth="1.5"/>
-    </svg>
-  ),
-  MySQL: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#00618A"/>
-      <path d="M5 10c0 0 3-2 7-1.5L15 10M15 10c2.5-2.5 7-2.5 9 0M5 22c0 0 3 2 7 1.5L15 22M15 22c2.5 2.5 7 2.5 9 0" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-      <path d="M5 10v12M15 10v12M24 10v12" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  ),
+  AWS: () => <FaAws size={28} color="#FF9900" />,
+  Ansible: () => <SiAnsible size={28} color="#EE0000" />,
+  Prometheus: () => <SiPrometheus size={28} color="#E6522C" />,
+  Grafana: () => <SiGrafana size={28} color="#F46800" />,
+  Nginx: () => <SiNginx size={28} color="#009639" />,
+  Helm: () => { const { dark } = useTheme(); return <SiHelm size={28} color={dark ? "#668cf2" : "#0F1689"} />; },
+  Jenkins: () => <SiJenkins size={28} color="#D24939" />,
+  Traefik: () => <SiTraefikproxy size={28} color="#24A1C1" />,
+  React: () => <SiReact size={28} color="#61DAFB" />,
+  NodeJS: () => <SiNodedotjs size={28} color="#5FA04E" />,
+  Angular: () => <SiAngular size={28} color="#DD0031" />,
+  SpringBoot: () => <SiSpringboot size={28} color="#6DB33F" />,
+  Express: () => { const { dark } = useTheme(); return <SiExpress size={28} color={dark ? "#E0E0E0" : "#1a1408"} />; },
+  Symfony: () => { const { dark } = useTheme(); return <SiSymfony size={28} color={dark ? "#FFFFFF" : "#1a1408"} />; },
+  Laravel: () => <SiLaravel size={28} color="#FF2D20" />,
+  Flask: () => { const { dark } = useTheme(); return <SiFlask size={28} color={dark ? "#FFFFFF" : "#1a1408"} />; },
+  Flutter: () => <SiFlutter size={28} color="#02569B" />,
+  Dotnet: () => <SiDotnet size={28} color="#512BD4" />,
+  JavaFX: () => <FaJava size={28} color="#ED8B00" />,
+  Java: () => <FaJava size={28} color="#007396" />,
+  Python: () => <SiPython size={28} color="#3776AB" />,
+  CPP: () => <SiCplusplus size={28} color="#00599C" />,
+  Csharp: () => <TbBrandCSharp size={28} color="#239120" />,
+  PHP: () => <SiPhp size={28} color="#777BB3" />,
+  TypeScript: () => <SiTypescript size={28} color="#3178C6" />,
+  JavaScript: () => <SiJavascript size={28} color="#F7DF1E" />,
+  PostgreSQL: () => <SiPostgresql size={28} color="#4169E1" />,
+  Redis: () => <SiRedis size={28} color="#DC382D" />,
+  MongoDB: () => <SiMongodb size={28} color="#47A248" />,
+  MySQL: () => <SiMysql size={28} color="#4479A1" />,
   OracleDB: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#F80000"/>
-      <ellipse cx="16" cy="16" rx="11" ry="6.5" fill="none" stroke="white" strokeWidth="2"/>
+    <svg viewBox="0 0 256 168" width="28" height="28">
+      <path fill="#F80000" d="M80.2 0C35.9 0 0 35.9 0 80.2s35.9 80.2 80.2 80.2h95.6c44.3 0 80.2-35.9 80.2-80.2S220.1 0 175.8 0H80.2zm93 129.5H82.8c-27.2 0-49.3-22.1-49.3-49.3s22.1-49.3-49.3-49.3h90.4c27.2 0 49.3 22.1 49.3 49.3s-22.1 49.3-49.3 49.3z"/>
     </svg>
   ),
-  Python: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <defs>
-        <linearGradient id="pyGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#366996"/>
-          <stop offset="100%" stopColor="#FFD845"/>
-        </linearGradient>
-      </defs>
-      <rect width="32" height="32" rx="4" fill="url(#pyGrad)"/>
-      <path d="M16 4c-5 0-5 2-5 2v3h10V8H11V6.5C11 6.5 11 5 16 5c5 0 5 1.5 5 1.5V10h-3V8H16z" fill="white" opacity="0.85"/>
-      <path d="M16 28c5 0 5-2 5-2v-3H11v1h10v1.5c0 0 0 1.5-5 1.5-5 0-5-1.5-5-1.5V22h3v2h2z" fill="white" opacity="0.85"/>
-      <circle cx="14" cy="7" r="1" fill="#366996"/>
-      <circle cx="18" cy="25" r="1" fill="#FFD845"/>
+  Firebase: () => <SiFirebase size={28} color="#FFCA28" />,
+  ScikitLearn: () => <SiScikitlearn size={28} color="#F7931E" />,
+  Pandas: () => { const { dark } = useTheme(); return <SiPandas size={28} color={dark ? "#b0a4e8" : "#150458"} />; },
+  NumPy: () => { const { dark } = useTheme(); return <SiNumpy size={28} color={dark ? "#4da6c4" : "#013243"} />; },
+  XGBoost: () => (
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none">
+      <rect width="24" height="24" rx="4" fill="#226496"/>
+      <path d="M6 18L18 6M6 6l12 12" stroke="#FFD700" strokeWidth="3" strokeLinecap="round"/>
     </svg>
   ),
-  Flask: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#1a1a1a"/>
-      <path d="M14 5h4v8l5 10c1 2-1 4-3 4H12c-2 0-4-2-3-4l5-10V5z" fill="none" stroke="white" strokeWidth="1.5"/>
-      <path d="M10 22l12 0" stroke="#f0a830" strokeWidth="1.5" strokeLinecap="round"/>
-      <circle cx="12" cy="24" r="1" fill="#f0a830"/>
-      <circle cx="16" cy="25.5" r="1" fill="#f0a830"/>
-    </svg>
-  ),
-  Flutter: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <defs>
-        <linearGradient id="flGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#54C5F8"/>
-          <stop offset="100%" stopColor="#01579B"/>
-        </linearGradient>
-      </defs>
-      <rect width="32" height="32" rx="4" fill="url(#flGrad)"/>
-      <path d="M8 16L18 6h6L14 16l10 10h-6L8 16z" fill="white"/>
-      <path d="M14 16l4 4-4 4-4-4 4-4z" fill="#29B6F6"/>
-    </svg>
-  ),
-  Firebase: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#FFCA28"/>
-      <path d="M7 26L12 7l5 9-3 4 3 6H7z" fill="#FF8F00"/>
-      <path d="M17 22l3-12 5 14H17z" fill="#FF6F00"/>
-      <path d="M14 16l2-6 5 14" fill="#FFA000" opacity="0.7"/>
-    </svg>
-  ),
-  CPP: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#00427C"/>
-      <text x="6" y="22" fontFamily="monospace" fontWeight="bold" fontSize="13" fill="white">C++</text>
-    </svg>
-  ),
-  ScikitLearn: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#F89939"/>
-      <circle cx="11" cy="16" r="5" fill="none" stroke="white" strokeWidth="2"/>
-      <circle cx="22" cy="16" r="4" fill="none" stroke="white" strokeWidth="2"/>
-      <path d="M16 14v4M14 16h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-    </svg>
-  ),
-  Git: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#F05032"/>
-      <circle cx="22" cy="10" r="3" fill="white"/>
-      <circle cx="22" cy="22" r="3" fill="white"/>
-      <circle cx="10" cy="22" r="3" fill="white"/>
-      <path d="M22 13v6M13 22h6M10 19V13l9-3" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-    </svg>
-  ),
-  Figma: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#1E1E1E"/>
-      <circle cx="19" cy="16" r="4" fill="#1ABCFE"/>
-      <rect x="9" y="5" width="8" height="8" rx="2" fill="#FF7262"/>
-      <rect x="17" y="5" width="8" height="8" rx="2" fill="#F24E1E"/>
-      <rect x="9" y="13" width="8" height="8" rx="2" fill="#A259FF"/>
-      <rect x="9" y="21" width="8" height="8" rx="2" fill="#0ACF83"/>
-    </svg>
-  ),
-  Postman: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#FF6C37"/>
-      <circle cx="16" cy="16" r="9" fill="white"/>
-      <circle cx="16" cy="16" r="5" fill="#FF6C37"/>
-      <path d="M16 11v5l3 3" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-    </svg>
-  ),
-  Arduino: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#00979D"/>
-      <path d="M9 16h4M19 16h4M16 12h-2a4 4 0 000 8h2M16 12h2a4 4 0 010 8h-2" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round"/>
-    </svg>
-  ),
-  Claude: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="6" fill="#CC785C"/>
-      <path d="M10 22l3-12h2l3 8 3-8h2l3 12h-2l-2-8-3 8h-1l-3-8-2 8H10z" fill="white"/>
-    </svg>
-  ),
-  JavaFX: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#ED8B00"/>
-      <text x="5" y="22" fontFamily="serif" fontWeight="bold" fontSize="12" fill="white">Java</text>
-    </svg>
-  ),
-  PHP: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#777BB3"/>
-      <ellipse cx="16" cy="16" rx="14" ry="8" fill="#4F5B93"/>
-      <text x="9" y="20" fontFamily="monospace" fontWeight="bold" fontSize="12" fill="white">PHP</text>
-    </svg>
-  ),
-  GitHub: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="16" fill="#1b1f23"/>
-      <path d="M16 5.5C10.2 5.5 5.5 10.2 5.5 16c0 4.6 3 8.5 7.1 9.9.5.1.7-.2.7-.5v-1.7c-2.9.6-3.5-1.4-3.5-1.4-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.3-.3-4.7-1.2-4.7-5.2 0-1.1.4-2 1-2.7-.1-.3-.5-1.3.1-2.7 0 0 .8-.3 2.8 1 .8-.2 1.7-.3 2.5-.3s1.7.1 2.5.3c2-.1.3 2.8 1 2.7 0 1.4.6 2.3 1 2.7 0 4-2.4 4.9-4.7 5.2.4.3.7 1 .7 2v2.9c0 .3.2.6.7.5 4.1-1.4 7.1-5.3 7.1-9.9C26.5 10.2 21.8 5.5 16 5.5z" fill="white"/>
-    </svg>
-  ),
-  LinkedIn: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#0A66C2"/>
-      <path d="M8 12h4v12H8V12zm2-6a2 2 0 110 4 2 2 0 010-4zm6 6h3.8v1.6h.1c.5-1 1.8-2 3.7-2 3.9 0 4.6 2.6 4.6 6V24h-4v-5.6c0-1.3 0-3-1.8-3-1.9 0-2.2 1.5-2.2 3V24H14V12z" fill="white"/>
-    </svg>
-  ),
-  Email: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="4" fill="#EA4335"/>
-      <path d="M6 10l10 8 10-8M6 10h20v14H6V10z" stroke="white" strokeWidth="1.5" fill="none" strokeLinejoin="round"/>
-    </svg>
-  ),
-  Phone: () => (
-    <svg viewBox="0 0 32 32" width="28" height="28">
-      <rect width="32" height="32" rx="16" fill="#4ecf8a"/>
-      <path d="M11 8h4l2 5-2.5 2c1 2 3 4 5 5l2-2.5 5 2v4c0 2-2 3-4 2A20 20 0 019 10c-1-2 0-4 2-2z" fill="white"/>
-    </svg>
-  ),
-  Download: () => (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-      <polyline points="7 10 12 15 17 10"/>
-      <line x1="12" y1="15" x2="12" y2="3"/>
-    </svg>
-  ),
-  Sun: () => (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <circle cx="12" cy="12" r="5"/>
-      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-    </svg>
-  ),
-  Moon: () => (
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-    </svg>
-  ),
+  ChartJS: () => <SiChartdotjs size={28} color="#FF6384" />,
+  Git: () => <SiGit size={28} color="#F05032" />,
+  GitHub: () => { const { dark } = useTheme(); return <FaGithub size={28} color={dark ? "#FFFFFF" : "#1a1408"} />; },
+  Figma: () => <SiFigma size={28} color="#F24E1E" />,
+  Postman: () => <SiPostman size={28} color="#FF6C37" />,
+  Arduino: () => <SiArduino size={28} color="#00979D" />,
+  Claude: () => <SiAnthropic size={28} color="#CC785C" />,
+  LinkedIn: () => <FaLinkedin size={28} color="#0A66C2" />,
+  Email: () => <IoMail size={28} color="#EA4335" />,
+  Phone: () => <IoCall size={26} color="#4ECF8A" />,
+  Download: () => <FaDownload size={16} />,
+  Sun: () => <IoSunny size={19} />,
+  Moon: () => <IoMoon size={18} />,
 };
 
 /* ─── SVG HEART cursor ───────────────────────────────────────── */
@@ -389,20 +511,23 @@ function HeartCursor({ color, visible }) {
 }
 
 /* ─── NAVBAR ─────────────────────────────────────────────────── */
-const navLinks = [
-  { label: "HOME",       href: "#home",       key: "gold"      },
-  { label: "ABOUT",      href: "#about",      key: "cyan"      },
-  { label: "PROJECTS",   href: "#projects",   key: "ember"     },
-  { label: "SKILLS",     href: "#skills",     key: "gold"      },
-  { label: "EXPERIENCE", href: "#experience", key: "sage"      },
-  { label: "CONTACT",    href: "#contact",    key: "champagne" },
-];
-
 function Navbar() {
-  const { dark, toggle, C } = useTheme();
+  const { dark, toggle, lang, setLang, C, t } = useTheme();
   const [cursorColor, setCursorColor] = useState(C.gold);
   const [cursorVisible, setCursorVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const cvFile = lang === "FR" ? "Yomna_Bouallegue_CV_FR.pdf" : "Yomna_Bouallegue_CV_EN.pdf";
+  const cvPath = `${import.meta.env.BASE_URL}${cvFile}`;
+
+  const navLinks = [
+    { label: t.nav.home,       href: "#home",       key: "gold"      },
+    { label: t.nav.about,      href: "#about",      key: "cyan"      },
+    { label: t.nav.projects,   href: "#projects",   key: "ember"     },
+    { label: t.nav.skills,     href: "#skills",     key: "gold"      },
+    { label: t.nav.experience, href: "#experience", key: "sage"      },
+    { label: t.nav.contact,    href: "#contact",    key: "champagne" },
+  ];
 
   useEffect(() => {
     const handleResize = () => { if (window.innerWidth >= 1024) setMenuOpen(false); };
@@ -418,7 +543,7 @@ function Navbar() {
         onMouseLeave={() => { setCursorVisible(false); setCursorColor(C.gold); }}>
         <nav className="w-full">
           <div style={{ background: C.navBg, borderBottom: `1px solid ${C.border}`, backdropFilter: "blur(20px)" }}
-            className="flex items-center justify-between px-5 sm:px-10 md:px-16 py-4 md:py-5">
+            className="flex items-center justify-between px-4 sm:px-8 md:px-12 py-3.5 md:py-4">
 
             <motion.a href="#home"
               onMouseEnter={() => setCursorColor(C.cyan)}
@@ -426,16 +551,16 @@ function Navbar() {
               whileHover={{ scale: 1.04 }} transition={{ duration: 0.2 }}
               className="font-bold leading-none md:cursor-none"
               style={{
-                fontFamily: "'Caveat', cursive", fontSize: 30,
-                background: `linear-gradient(100deg, ${C.gold}, ${C.champagne}, ${C.ember})`,
+                fontFamily: "'Caveat', cursive", fontSize: 28,
+                backgroundImage: `linear-gradient(100deg, ${C.gold}, ${C.champagne}, ${C.ember})`,
                 backgroundClip: "text",
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                textShadow: `0 0 8px ${C.gold}55`,
+                textShadow: dark ? `0 0 8px ${C.gold}55` : "none",
               }}>
               Yomna Bouallegue ♡
             </motion.a>
 
-            <div className="hidden lg:flex items-center gap-10 text-[11px] font-extrabold tracking-[0.22em]">
+            <div className="hidden lg:flex items-center gap-8 text-[11px] font-extrabold tracking-[0.2em]">
               {navLinks.map((link) => (
                 <motion.a key={link.label} href={link.href}
                   onMouseEnter={() => setCursorColor(C[link.key])}
@@ -455,31 +580,61 @@ function Navbar() {
               ))}
             </div>
 
-            <div className="flex items-center gap-3">
-              {/* Theme toggle */}
-              
+            <div className="flex items-center gap-2.5">
+              {/* Language Selector EN | FR */}
+              <div className="flex items-center rounded-full p-0.5 text-[10px] font-bold"
+                style={{ border: `1px solid ${C.gold}33`, background: `${C.gold}08` }}>
+                <button
+                  onClick={() => setLang("EN")}
+                  className="px-2 py-0.5 rounded-full transition-all duration-200"
+                  style={{
+                    background: lang === "EN" ? C.gold : "transparent",
+                    color: lang === "EN" ? "#1a0e00" : C.textMuted,
+                  }}>
+                  EN
+                </button>
+                <button
+                  onClick={() => setLang("FR")}
+                  className="px-2 py-0.5 rounded-full transition-all duration-200"
+                  style={{
+                    background: lang === "FR" ? C.gold : "transparent",
+                    color: lang === "FR" ? "#1a0e00" : C.textMuted,
+                  }}>
+                  FR
+                </button>
+              </div>
 
+              {/* Theme Toggle Button */}
+              <button
+                onClick={toggle}
+                className="flex items-center justify-center w-8 h-8 rounded-full text-sm transition"
+                style={{ border: `1px solid ${C.gold}33`, background: `${C.gold}08`, color: C.gold }}
+                title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}>
+                {dark ? <Icon.Sun /> : <Icon.Moon />}
+              </button>
+
+              {/* Download CV */}
               <motion.a
-                href="/Yomna_Bouallegue_CV_EN.pdf"
-                download="Yomna_Bouallegue_CV.pdf"
-                whileHover={{ scale: 1.06, boxShadow: `0 0 24px ${C.gold}55` }}
+                href={cvPath}
+                download={cvFile}
+                whileHover={{ scale: 1.05, boxShadow: `0 0 24px ${C.gold}55` }}
                 whileTap={{ scale: 0.97 }}
                 onMouseEnter={() => setCursorColor(C.ember)}
                 onMouseLeave={() => setCursorColor(C.gold)}
-                className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-[13px] md:cursor-none"
+                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-[12px] md:cursor-none"
                 style={{ border: `1.5px solid ${C.gold}55`, color: C.gold, background: `${C.gold}0d`, transition: "all 0.3s" }}>
                 <Icon.Download />
-                Download CV
+                {t.nav.downloadCV}
               </motion.a>
 
               <motion.a href="#contact"
-                whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.97 }}
-                className="px-4 sm:px-7 py-2.5 sm:py-3 rounded-md font-extrabold text-[13px] sm:text-[15px] md:cursor-none inline-flex items-center gap-1"
-                style={{ background: C.gold, color: "#1a0e00", boxShadow: `0 0 28px ${C.gold}44` }}>
-                Let's Talk ↗
+                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
+                className="px-3.5 sm:px-6 py-2 rounded-md font-extrabold text-[12px] sm:text-[14px] md:cursor-none inline-flex items-center gap-1"
+                style={{ background: C.gold, color: "#1a0e00", boxShadow: `0 0 24px ${C.gold}44` }}>
+                {t.nav.letsTalk}
               </motion.a>
 
-              <button className="lg:hidden flex items-center justify-center w-10 h-10 rounded-md text-xl"
+              <button className="lg:hidden flex items-center justify-center w-9 h-9 rounded-md text-lg"
                 style={{ border: `1px solid ${C.gold}33`, background: `${C.gold}08`, color: C.text }}
                 onClick={() => setMenuOpen((v) => !v)}>
                 {menuOpen ? "✕" : "☰"}
@@ -497,24 +652,38 @@ function Navbar() {
                   <motion.a key={link.label} href={link.href}
                     initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-lg text-[12px] font-extrabold tracking-[0.2em]"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[12px] font-extrabold tracking-[0.2em]"
                     style={{ color: C.textMuted }}>
                     <span className="w-[5px] h-[5px] rounded-full flex-shrink-0"
                       style={{ background: C[link.key], boxShadow: `0 0 6px ${C[link.key]}` }} />
                     {link.label}
                   </motion.a>
                 ))}
-                <button onClick={toggle}
-                  className="flex items-center gap-3 px-3 py-3 rounded-lg text-[12px] font-extrabold tracking-[0.2em]"
-                  style={{ color: C.gold }}>
-                  {dark ? <Icon.Sun /> : <Icon.Moon />}
-                  {dark ? "LIGHT MODE" : "DARK MODE"}
-                </button>
-                <a href="/Yomna_Bouallegue_CV_EN.pdf" download="Yomna_Bouallegue_CV.pdf"
-                  className="flex items-center gap-3 px-3 py-3 rounded-lg text-[12px] font-extrabold tracking-[0.2em] mt-2"
+                
+                <div className="flex items-center justify-between px-3 py-2 mt-2"
+                  style={{ borderTop: `1px solid ${C.border}` }}>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold" style={{ color: C.textMuted }}>Lang:</span>
+                    <button onClick={() => setLang("EN")}
+                      className="px-2 py-0.5 rounded text-xs font-bold"
+                      style={{ background: lang === "EN" ? C.gold : "transparent", color: lang === "EN" ? "#1a0e00" : C.textMuted }}>EN</button>
+                    <button onClick={() => setLang("FR")}
+                      className="px-2 py-0.5 rounded text-xs font-bold"
+                      style={{ background: lang === "FR" ? C.gold : "transparent", color: lang === "FR" ? "#1a0e00" : C.textMuted }}>FR</button>
+                  </div>
+                  <button onClick={toggle}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-bold"
+                    style={{ color: C.gold, border: `1px solid ${C.gold}33` }}>
+                    {dark ? <Icon.Sun /> : <Icon.Moon />}
+                    {dark ? "LIGHT" : "DARK"}
+                  </button>
+                </div>
+
+                <a href={cvPath} download={cvFile}
+                  className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-[12px] font-extrabold tracking-[0.2em] mt-2"
                   style={{ color: C.gold, border: `1px solid ${C.gold}33`, background: `${C.gold}08` }}>
                   <Icon.Download />
-                  DOWNLOAD CV
+                  {t.nav.downloadCV} ({lang})
                 </a>
               </motion.div>
             )}
@@ -527,8 +696,11 @@ function Navbar() {
 
 /* ─── HERO ───────────────────────────────────────────────────── */
 function Hero() {
-  const { dark, C } = useTheme();
+  const { dark, lang, C, t } = useTheme();
   const [cursorVisible, setCursorVisible] = useState(false);
+
+  const cvFile = lang === "FR" ? "Yomna_Bouallegue_CV_FR.pdf" : "Yomna_Bouallegue_CV_EN.pdf";
+  const cvPath = `${import.meta.env.BASE_URL}${cvFile}`;
 
   return (
     <>
@@ -555,7 +727,7 @@ function Hero() {
             <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(26px,4vw,50px)", color: C.text }}>
-              Hi, I'm
+              {t.hero.hi}
             </motion.p>
 
             <motion.h1 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
@@ -566,13 +738,13 @@ function Hero() {
                 lineHeight: 0.85,
                 fontWeight: 700,
                 marginTop: 8,
-                background: `linear-gradient(120deg, ${C.gold} 0%, ${C.champagne} 45%, ${C.ember} 100%)`,
+                backgroundImage: `linear-gradient(120deg, ${C.gold} 0%, ${C.champagne} 45%, ${C.ember} 100%)`,
                 backgroundClip: "text",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
-                textShadow: `0 0 14px ${C.gold}44`,
+                textShadow: dark ? `0 0 14px ${C.gold}44` : "none",
               }}>
-              Yomna<br />Bouallegue
+              {t.hero.title1}<br />{t.hero.title2}
             </motion.h1>
 
             <motion.div initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
@@ -592,8 +764,8 @@ function Hero() {
                 transition={{ duration: 2, repeat: Infinity }}
                 className="w-2 h-2 rounded-full"
                 style={{ background: C.gold, boxShadow: `0 0 8px ${C.gold}` }} />
-              <span className="text-[11px] font-bold tracking-[0.24em] uppercase" style={{ color: `${C.gold}cc` }}>
-                Cloud Computing Engineering Student · ESPRIT
+              <span className="text-[11px] font-bold tracking-[0.24em] uppercase" style={{ color: dark ? `${C.gold}cc` : C.gold }}>
+                {t.hero.role}
               </span>
             </motion.div>
 
@@ -601,14 +773,12 @@ function Hero() {
               transition={{ delay: 0.65 }}
               className="mt-4 leading-7 max-w-md text-[15px] mx-auto lg:mx-0"
               style={{ color: C.textMuted }}>
-              I build <span style={{ color: C.gold, fontWeight: 600 }}>cloud-native</span> systems,{" "}
-              <span style={{ color: C.cyan, fontWeight: 600 }}>full-stack</span> platforms, and{" "}
-              <span style={{ color: C.ember, fontWeight: 600 }}>AI-powered</span> apps that actually ship.
+              {t.hero.desc1}<span style={{ color: C.gold, fontWeight: 600 }}>{t.hero.descCloud}</span>{t.hero.descMid}<span style={{ color: C.cyan, fontWeight: 600 }}>{t.hero.descFullStack}</span>{t.hero.descAnd}<span style={{ color: C.ember, fontWeight: 600 }}>{t.hero.descAi}</span>{t.hero.descEnd}
             </motion.p>
 
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.72 }}
-              style={{ fontFamily: "'Caveat', cursive", marginTop: 12, fontSize: 18, color: `${C.gold}77`, transform: "rotate(-1.5deg)" }}>
-              ✦ Tunis, Tunisia · open to internships ♡
+              style={{ fontFamily: "'Caveat', cursive", marginTop: 12, fontSize: 18, color: dark ? `${C.gold}77` : C.gold, transform: "rotate(-1.5deg)" }}>
+              {t.hero.location}
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -618,14 +788,14 @@ function Hero() {
                 whileHover={{ scale: 1.05, boxShadow: `0 0 30px ${C.gold}55` }} whileTap={{ scale: 0.97 }}
                 className="inline-flex items-center gap-2 rounded-full px-7 py-3 font-bold text-sm"
                 style={{ background: C.gold, color: "#1a0e00" }}>
-                Explore My Work ↗
+                {t.hero.exploreBtn}
               </motion.a>
-              <motion.a href="/Yomna_Bouallegue_CV_EN.pdf" download="Yomna_Bouallegue_CV.pdf"
+              <motion.a href={cvPath} download={cvFile}
                 whileHover={{ scale: 1.05, borderColor: C.gold, color: C.gold }} whileTap={{ scale: 0.97 }}
                 className="inline-flex items-center gap-2 rounded-full px-7 py-3 font-bold text-sm transition-all duration-300"
-                style={{ border: `1px solid ${C.gold}44`, color: C.textMuted }}>
+                style={{ border: `1.5px solid ${C.gold}55`, color: C.text }}>
                 <Icon.Download />
-                Download CV
+                {t.hero.downloadCV}
               </motion.a>
             </motion.div>
 
@@ -639,7 +809,7 @@ function Hero() {
                 <motion.a key={i} href={s.href}
                   target={s.href.startsWith("mailto") ? undefined : "_blank"} rel="noreferrer"
                   whileHover={{ scale: 1.25, y: -3 }} transition={{ duration: 0.2 }}
-                  title={s.label} style={{ display: "inline-flex", opacity: 0.75, filter: "grayscale(0.2)" }}>
+                  title={s.label} style={{ display: "inline-flex", opacity: 0.85 }}>
                   <s.Ic />
                 </motion.a>
               ))}
@@ -654,25 +824,29 @@ function Hero() {
             <motion.div animate={{ y: [0, -10, 0], rotate: [0.5, -0.5, 0.5] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               className="relative rounded-2xl overflow-hidden w-full max-w-[440px]"
-              style={{ background: dark ? "rgba(8,9,26,0.92)" : "rgba(237,232,223,0.95)", border: `1px solid ${C.gold}33`, boxShadow: `0 0 60px ${C.gold}15, 0 0 120px ${C.cyan}0a` }}>
+              style={{
+                background: "rgba(18, 22, 38, 0.96)",
+                border: `1px solid ${C.gold}44`,
+                boxShadow: dark ? `0 0 60px ${C.gold}15, 0 0 120px ${C.cyan}0a` : `0 20px 50px rgba(0,0,0,0.18)`,
+              }}>
               <div className="flex items-center gap-2 px-4 py-3"
-                style={{ background: dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.04)", borderBottom: `1px solid ${C.gold}18` }}>
+                style={{ background: "rgba(255,255,255,0.04)", borderBottom: `1px solid ${C.gold}22` }}>
                 <span className="w-3 h-3 rounded-full" style={{ background: "#ff5f57" }} />
                 <span className="w-3 h-3 rounded-full" style={{ background: "#ffbd2e" }} />
                 <span className="w-3 h-3 rounded-full" style={{ background: "#28c840" }} />
-                <span className="ml-4 font-mono text-[11px]" style={{ color: `${C.gold}66` }}>yomna@esprit:~$</span>
+                <span className="ml-4 font-mono text-[11px]" style={{ color: "#f0a830aa" }}>yomna@esprit:~$</span>
               </div>
               <div className="p-6 font-mono text-[13px] leading-[1.9]">
-                <div style={{ color: C.text }}><span style={{ color: C.cyan }}>const</span> <span style={{ color: C.gold }}>yomna</span> <span style={{ color: C.textMuted }}>=</span> {"{"}</div>
-                <div className="ml-5" style={{ color: C.text }}><span style={{ color: C.champagne }}>name</span><span style={{ color: C.textMuted }}>:</span> <span style={{ color: C.sage }}>"Yomna Bouallegue"</span>,</div>
-                <div className="ml-5" style={{ color: C.text }}><span style={{ color: C.champagne }}>school</span><span style={{ color: C.textMuted }}>:</span> <span style={{ color: C.sage }}>"ESPRIT – Cloud Computing"</span>,</div>
-                <div className="ml-5" style={{ color: C.text }}><span style={{ color: C.champagne }}>stack</span><span style={{ color: C.textMuted }}>:</span> [<span style={{ color: C.ember }}>"K8s"</span>, <span style={{ color: C.ember }}>"React"</span>, <span style={{ color: C.ember }}>"Azure"</span>],</div>
-                <div className="ml-5" style={{ color: C.text }}><span style={{ color: C.champagne }}>passion</span><span style={{ color: C.textMuted }}>:</span> <span style={{ color: C.sage }}>"building things that matter"</span>,</div>
-                <div className="ml-5" style={{ color: C.text }}><span style={{ color: C.champagne }}>openToInternship</span><span style={{ color: C.textMuted }}>:</span> <span style={{ color: C.gold }}>true</span> <span style={{ color: C.textSub }}>// ♡</span></div>
-                <div style={{ color: C.text }}>{"}"}</div>
+                <div style={{ color: "#ffffff" }}><span style={{ color: "#5eb8d4" }}>const</span> <span style={{ color: "#f0a830" }}>yomna</span> <span style={{ color: "rgba(255,255,255,0.6)" }}>=</span> {"{"}</div>
+                <div className="ml-5" style={{ color: "#ffffff" }}><span style={{ color: "#e8d5a0" }}>name</span><span style={{ color: "rgba(255,255,255,0.6)" }}>:</span> <span style={{ color: "#4ecf8a" }}>"Yomna Bouallegue"</span>,</div>
+                <div className="ml-5" style={{ color: "#ffffff" }}><span style={{ color: "#e8d5a0" }}>school</span><span style={{ color: "rgba(255,255,255,0.6)" }}>:</span> <span style={{ color: "#4ecf8a" }}>{t.hero.terminalSchool}</span>,</div>
+                <div className="ml-5" style={{ color: "#ffffff" }}><span style={{ color: "#e8d5a0" }}>stack</span><span style={{ color: "rgba(255,255,255,0.6)" }}>:</span> [<span style={{ color: "#e06b3c" }}>"K8s"</span>, <span style={{ color: "#e06b3c" }}>"AWS"</span>, <span style={{ color: "#e06b3c" }}>"Laravel 13"</span>, <span style={{ color: "#e06b3c" }}>"React 19"</span>, <span style={{ color: "#e06b3c" }}>".NET"</span>],</div>
+                <div className="ml-5" style={{ color: "#ffffff" }}><span style={{ color: "#e8d5a0" }}>passion</span><span style={{ color: "rgba(255,255,255,0.6)" }}>:</span> <span style={{ color: "#4ecf8a" }}>{t.hero.terminalPassion}</span>,</div>
+                <div className="ml-5" style={{ color: "#ffffff" }}><span style={{ color: "#e8d5a0" }}>openToInternship</span><span style={{ color: "rgba(255,255,255,0.6)" }}>:</span> <span style={{ color: "#f0a830" }}>true</span> <span style={{ color: "rgba(255,255,255,0.35)" }}>// ♡</span></div>
+                <div style={{ color: "#ffffff" }}>{"}"}</div>
                 <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1.1, repeat: Infinity }}
                   className="inline-block w-2 h-5 align-middle ml-1 mt-1 rounded-sm"
-                  style={{ background: C.gold }} />
+                  style={{ background: "#f0a830" }} />
               </div>
             </motion.div>
           </motion.div>
@@ -684,13 +858,13 @@ function Hero() {
 
 /* ─── ABOUT ──────────────────────────────────────────────────── */
 function About() {
-  const { dark, C } = useTheme();
+  const { dark, C, t } = useTheme();
 
   const notes = [
-    { title: "Curious",  text: "I ask questions and never stop learning.",         bg: dark ? "#1a1205" : "#fdf0d5", border: C.gold,      rotate: "-2deg",  svgIcon: () => <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> },
-    { title: "Builder",  text: "From code to cloud — I turn ideas into products.", bg: dark ? "#071620" : "#dff3fb", border: C.cyan,      rotate:  "1.5deg", svgIcon: () => <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke={C.cyan} strokeWidth="2" strokeLinecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> },
-    { title: "Cloud",    text: "Cloud-native at heart: K8s, Docker, OpenStack.",   bg: dark ? "#1a0c05" : "#fde8dc", border: C.ember,     rotate: "-1deg",   svgIcon: () => <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke={C.ember} strokeWidth="2" strokeLinecap="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg> },
-    { title: "AI-First", text: "I weave AI APIs into every platform I build.",     bg: dark ? "#061a0e" : "#d8f5e8", border: C.sage,      rotate:  "2deg",   svgIcon: () => <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke={C.sage} strokeWidth="2" strokeLinecap="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill={C.sage}/></svg> },
+    { title: t.about.note1Title, text: t.about.note1Text, bg: dark ? "#1a1205" : "#fdf0d5", border: C.gold, rotate: "-2deg",  svgIcon: () => <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg> },
+    { title: t.about.note2Title, text: t.about.note2Text, bg: dark ? "#071620" : "#dff3fb", border: C.cyan, rotate:  "1.5deg", svgIcon: () => <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke={C.cyan} strokeWidth="2" strokeLinecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> },
+    { title: t.about.note3Title, text: t.about.note3Text, bg: dark ? "#1a0c05" : "#fde8dc", border: C.ember,rotate: "-1deg",   svgIcon: () => <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke={C.ember} strokeWidth="2" strokeLinecap="round"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg> },
+    { title: t.about.note4Title, text: t.about.note4Text, bg: dark ? "#061a0e" : "#d8f5e8", border: C.sage, rotate:  "2deg",   svgIcon: () => <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke={C.sage} strokeWidth="2" strokeLinecap="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill={C.sage}/></svg> },
   ];
 
   return (
@@ -700,18 +874,18 @@ function About() {
           viewport={{ once: true }} transition={{ duration: 0.8 }}
           className="lg:col-span-5 text-center lg:text-left">
           <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(36px,6vw,72px)", color: C.text }}>
-            About me <span style={{ color: C.gold }}>☆</span>
+            {t.about.title}
           </h2>
           <div className="mt-6 space-y-4 leading-8 text-[15px] sm:text-[17px] max-w-[420px] mx-auto lg:mx-0" style={{ color: C.textMuted }}>
-            <p>2nd-year <span style={{ color: C.gold, fontWeight: 600 }}>Cloud Computing Engineering</span> student at ESPRIT Tunis.</p>
-            <p>I love building things — from deploying OpenStack private clouds and Kubernetes clusters, to shipping full-stack apps and integrating AI into real products.</p>
-            <p>Also a fantasy fiction enthusiast who believes strong female leads and clean deployments have a lot in common ☕</p>
+            <p>{t.about.p1_1}<span style={{ color: C.gold, fontWeight: 600 }}>{t.about.p1_cloud}</span>{t.about.p1_2}</p>
+            <p>{t.about.p2}</p>
+            <p>{t.about.p3}</p>
           </div>
           <div className="flex justify-center lg:justify-start">
             <a href="#contact"
               className="mt-7 inline-block rounded-full px-6 py-2.5 font-bold text-sm transition hover:scale-105"
               style={{ background: `${C.gold}15`, border: `1px solid ${C.gold}44`, color: C.gold }}>
-              Get in touch ↗
+              {t.about.getInTouch}
             </a>
           </div>
         </motion.div>
@@ -723,10 +897,10 @@ function About() {
             style={{ background: C.gold, filter: "blur(100px)", opacity: 0.07 }} />
           <div className="grid grid-cols-2 gap-3 w-full max-w-sm relative z-10">
             {[
-              { num: "6+", label: "Major Projects", color: C.gold      },
-              { num: "3+", label: "Tech Stacks",     color: C.cyan      },
-              { num: "1",  label: "Internship",      color: C.ember     },
-              { num: "∞",  label: "Love for Code",   color: C.sage      },
+              { num: "9+", label: t.about.statProjects, color: C.gold      },
+              { num: "4+", label: t.about.statStacks,   color: C.cyan      },
+              { num: "2",  label: t.about.statInternships, color: C.ember  },
+              { num: "∞",  label: t.about.statLove,     color: C.sage      },
             ].map((s, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ delay: i * 0.1 }}
@@ -739,16 +913,16 @@ function About() {
             ))}
           </div>
           <motion.span animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity }}
-            className="absolute right-12 top-8 text-3xl hidden sm:block pointer-events-none"
+            className="absolute right-12 top-8 text-3xl hidden sm:block pointer-events-none whitespace-pre-line text-center"
             style={{ fontFamily: "'Caveat', cursive", color: C.cyan, opacity: 0.45, transform: "rotate(-8deg)" }}>
-            cloud<br/>native<br/>engineer
+            cloud{"\n"}native{"\n"}engineer
           </motion.span>
         </motion.div>
       </div>
 
       <div className="relative mt-10 grid grid-cols-1 sm:grid-cols-[110px_1fr] gap-4 items-start">
-        <div style={{ fontFamily: "'Caveat', cursive", color: `${C.gold}88`, fontSize: 28, lineHeight: 0.95, transform: "rotate(-8deg)", paddingTop: 16, textAlign: "center" }}>
-          What<br />drives<br />me →
+        <div className="whitespace-pre-line text-center" style={{ fontFamily: "'Caveat', cursive", color: `${C.gold}88`, fontSize: 26, lineHeight: 0.95, transform: "rotate(-8deg)", paddingTop: 16 }}>
+          {t.about.drivesTitle}
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {notes.map((note, i) => (
@@ -771,89 +945,98 @@ function About() {
 
 /* ─── PROJECTS ───────────────────────────────────────────────── */
 function Projects() {
-  const { dark, C } = useTheme();
+  const { dark, C, t } = useTheme();
   const [selected, setSelected] = useState(null);
 
   const projects = [
     {
-      title: "TFAKADNI",
-      subtitle: "Cloud-Native Maternal Health Platform",
-      tags: ["OpenStack", "Kubernetes", "Angular", "Spring Boot", "Prometheus", "JWT"],
-      desc: "7-node OpenStack private cloud + Kubernetes v1.29 cluster with auto-remediation pipeline for CrashLoopBackOff. Angular + Spring Boot + MySQL with JWT/BCrypt security, Prometheus + Grafana monitoring, and Ingress-nginx.",
+      title: t.projects.edoraTitle,
+      subtitle: t.projects.edoraSub,
+      tags: ["Laravel 13", "PHP", "PostgreSQL", "Redis", "React 19", "TypeScript", "Docker", "K3s", "Sanctum", "Chart.js"],
+      desc: t.projects.edoraDesc,
+      accent: C.sage,
+      badge: t.projects.edoraBadge,
+      Icon: Icon.Laravel,
+    },
+    {
+      title: t.projects.tfakadniTitle,
+      subtitle: t.projects.tfakadniSub,
+      tags: ["OpenStack", "Kubernetes", "Angular", "Spring Boot", "Prometheus", "Grafana", "JWT"],
+      desc: t.projects.tfakadniDesc,
       accent: C.gold,
-      badge: "Bal des Projets",
+      badge: t.projects.tfakadniBadge,
       Icon: Icon.Kubernetes,
     },
     {
-      title: "FitLife",
-      subtitle: "Sports & Nutrition Coaching Platform",
-      tags: ["React Native", "React.js", "Node.js", "MongoDB", "Docker", "Azure VM", "Nginx"],
-      desc: "Complete coaching platform built & deployed in 6 weeks during internship at Catalyze Tech. Multi-role mobile app + React.js admin dashboard + secure REST API. Deployed on Azure Linux VM with Docker & Nginx.",
+      title: t.projects.fitlifeTitle,
+      subtitle: t.projects.fitlifeSub,
+      tags: ["React Native", "React.js", "Node.js", "MongoDB", "Express.js", "Docker", "Azure VM", "Nginx"],
+      desc: t.projects.fitlifeDesc,
       accent: C.cyan,
-      badge: "Catalyze Tech Internship",
-      Icon: Icon.NodeJS,
+      badge: t.projects.fitlifeBadge,
+      Icon: Icon.React,
     },
     {
-      title: "MedAssist AI",
-      subtitle: "Medical Diagnosis Platform using Machine Learning",
-      tags: ["Python", "Scikit-learn", "Flask", "XGBoost", "LightGBM", "Random Forest", "SVM"],
-      desc: "Early detection of lung cancer, brain tumor, diabetes, depression & anxiety. Trained and benchmarked 6 ML models across 5 medical datasets. Flask-based prediction interface with interpretable real-time results.",
+      title: t.projects.medassistTitle,
+      subtitle: t.projects.medassistSub,
+      tags: ["Python", "Scikit-learn", "Pandas", "NumPy", "Flask", "XGBoost", "LightGBM", "Random Forest", "SVM"],
+      desc: t.projects.medassistDesc,
       accent: C.sage,
-      badge: "AI / ML",
+      badge: t.projects.medassistBadge,
       Icon: Icon.ScikitLearn,
     },
     {
-      title: "CHRONOSERENA",
-      subtitle: "Distributed Medical Platform for Chronic Diseases",
+      title: t.projects.chronoTitle,
+      subtitle: t.projects.chronoSub,
       tags: ["JavaFX", "Symfony", "PHP", "MySQL", "REST API", "MVC"],
-      desc: "Distributed medical platform for patients with chronic conditions. JavaFX desktop app + Symfony web interface. MVC architecture, REST APIs, Singleton design pattern and reactive data validation.",
+      desc: t.projects.chronoDesc,
       accent: C.champagne,
-      badge: "Full-Stack",
-      Icon: Icon.JavaFX,
+      badge: t.projects.chronoBadge,
+      Icon: Icon.Symfony,
     },
     {
-      title: "Brush & Bargain",
-      subtitle: "Mobile Art Sales & Exhibition App",
+      title: t.projects.brushTitle,
+      subtitle: t.projects.brushSub,
       tags: ["FlutterFlow", "Dart", "Firebase"],
-      desc: "Cross-platform mobile app for buying, selling and showcasing artworks. Features event management, bookings, and a customer claims module — built with FlutterFlow and Firebase.",
+      desc: t.projects.brushDesc,
       accent: C.ember,
-      badge: "Mobile",
+      badge: t.projects.brushBadge,
       Icon: Icon.Flutter,
     },
     {
-      title: "AgroDesk",
-      subtitle: "Agricultural Management Desktop App + Arduino System",
+      title: t.projects.agroTitle,
+      subtitle: t.projects.agroSub,
       tags: ["C++", "Qt Designer", "Oracle DB", "Arduino", "Servo Motor"],
-      desc: "OOP C++ desktop application with Qt Designer for farm management, integrated with an Arduino module for automated animal feeding scheduling using a servo motor and push button.",
+      desc: t.projects.agroDesc,
       accent: C.gold,
-      badge: "Desktop + Embedded",
+      badge: t.projects.agroBadge,
       Icon: Icon.Arduino,
     },
     {
-      title: "Banking Security System",
-      subtitle: "PIC16F877 Microcontroller Security System",
+      title: t.projects.bankTitle,
+      subtitle: t.projects.bankSub,
       tags: ["Embedded C", "PIC16F877", "EEPROM", "Gas Sensors", "Temperature Sensors"],
-      desc: "Embedded banking security system on PIC16F877 monitoring gas and temperature sensors, with automatic alarm triggers and an EEPROM incident log for security agents.",
+      desc: t.projects.bankDesc,
       accent: C.ember,
-      badge: "Embedded Systems",
+      badge: t.projects.bankBadge,
       Icon: Icon.CPP,
     },
     {
-      title: "Aryam",
-      subtitle: "2D Narrative Video Game (SDL / C)",
+      title: t.projects.aryamTitle,
+      subtitle: t.projects.aryamSub,
       tags: ["C", "SDL"],
-      desc: "Narrative 2D game where heroine Aryam fights depression during the Covid-19 lockdown. Full game loop, sprite rendering and collision detection — built entirely in C with SDL.",
+      desc: t.projects.aryamDesc,
       accent: C.cyan,
-      badge: "Game Dev",
+      badge: t.projects.aryamBadge,
       Icon: Icon.CPP,
     },
     {
-      title: "KADAMNI",
-      subtitle: "Web Recruitment Platform",
+      title: t.projects.kadamniTitle,
+      subtitle: t.projects.kadamniSub,
       tags: ["PHP", "HTML", "CSS", "MySQL"],
-      desc: "Full recruitment website covering job posting, application management, and administration of employer and candidate accounts — built with vanilla PHP and MySQL.",
+      desc: t.projects.kadamniDesc,
       accent: C.sage,
-      badge: "Web Project",
+      badge: t.projects.kadamniBadge,
       Icon: Icon.PHP,
     },
   ];
@@ -863,12 +1046,12 @@ function Projects() {
       <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }} transition={{ duration: 0.7 }}
         className="flex items-center gap-4 mb-2">
-        <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(48px,8vw,96px)", color: C.text, lineHeight: 1 }}>Projects</h2>
+        <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(48px,8vw,96px)", color: C.text, lineHeight: 1 }}>{t.projects.title}</h2>
         <motion.span animate={{ scale: [1, 1.25, 1], rotate: [-5, 5, -5] }} transition={{ duration: 2.5, repeat: Infinity }}
           style={{ fontSize: 32, color: C.ember }}>✦</motion.span>
       </motion.div>
       <p className="mb-10 text-[10px] tracking-[0.22em] uppercase" style={{ color: C.textSub }}>
-        Things I've built and shipped ♡
+        {t.projects.tagline}
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -895,9 +1078,9 @@ function Projects() {
             <p className="text-[12px] mb-3" style={{ color: p.accent }}>{p.subtitle}</p>
             <p className="text-[13px] leading-5 mb-4" style={{ color: C.textMuted }}>{p.desc}</p>
             <div className="flex flex-wrap gap-1.5">
-              {p.tags.map((t) => (
-                <span key={t} className="text-[9px] px-2 py-0.5 rounded-full font-semibold"
-                  style={{ background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.06)", color: C.textMuted }}>{t}</span>
+              {p.tags.map((tag) => (
+                <span key={tag} className="text-[9px] px-2 py-0.5 rounded-full font-semibold"
+                  style={{ background: dark ? "rgba(255,255,255,0.06)" : "rgba(184,115,14,0.14)", color: dark ? "rgba(255,255,255,0.85)" : "#1a1408" }}>{tag}</span>
               ))}
             </div>
           </motion.div>
@@ -924,9 +1107,9 @@ function Projects() {
               <p className="text-sm mb-4" style={{ color: selected.accent }}>{selected.subtitle}</p>
               <p className="text-[15px] leading-7" style={{ color: C.textMuted }}>{selected.desc}</p>
               <div className="flex flex-wrap gap-2 mt-5">
-                {selected.tags.map((t) => (
-                  <span key={t} className="text-[11px] px-3 py-1 rounded-full font-semibold"
-                    style={{ background: `${selected.accent}18`, color: selected.accent, border: `1px solid ${selected.accent}30` }}>{t}</span>
+                {selected.tags.map((tag) => (
+                  <span key={tag} className="text-[11px] px-3 py-1 rounded-full font-semibold"
+                    style={{ background: `${selected.accent}18`, color: selected.accent, border: `1px solid ${selected.accent}30` }}>{tag}</span>
                 ))}
               </div>
             </motion.div>
@@ -939,7 +1122,7 @@ function Projects() {
 
 /* ─── SKILLS ─────────────────────────────────────────────────── */
 function SkillPill({ skill, index }) {
-  const { C } = useTheme();
+  const { dark, C } = useTheme();
   const [hov, setHov] = useState(false);
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
@@ -949,8 +1132,8 @@ function SkillPill({ skill, index }) {
       className="rounded-xl flex flex-col items-center justify-center px-2 py-3"
       style={{
         height: 96,
-        background: hov ? `${skill.color}0d` : "rgba(255,255,255,0.015)",
-        border: hov ? `1px solid ${skill.color}55` : `1px solid rgba(255,255,255,0.06)`,
+        background: hov ? `${skill.color}15` : dark ? "rgba(255,255,255,0.02)" : "rgba(26,20,8,0.035)",
+        border: hov ? `1.5px solid ${skill.color}77` : dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(184,115,14,0.22)",
         transition: "all 0.25s",
       }}>
       <div className="mb-2" style={{ filter: hov ? `drop-shadow(0 0 8px ${skill.color})` : "none", transition: "filter 0.25s" }}>
@@ -984,65 +1167,80 @@ function Marquee({ items, color }) {
 }
 
 function Skills() {
-  const { C } = useTheme();
+  const { dark, C, t } = useTheme();
 
   const skillGroups = [
     {
-      label: "Cloud & DevOps", accent: C.gold, tagline: "My primary focus",
+      label: t.skills.g1Label, accent: C.gold, tagline: t.skills.g1Tagline,
       skills: [
         { name: "Kubernetes", Icon: Icon.Kubernetes, color: "#326CE5" },
         { name: "Docker",     Icon: Icon.Docker,     color: "#2496ED" },
+        { name: "AWS",        Icon: Icon.AWS,        color: "#FF9900" },
         { name: "OpenStack",  Icon: Icon.OpenStack,  color: "#ED1944" },
         { name: "Azure",      Icon: Icon.Azure,      color: "#0089D6" },
         { name: "Ansible",    Icon: Icon.Ansible,    color: "#EE0000" },
         { name: "Prometheus", Icon: Icon.Prometheus, color: "#E6522C" },
         { name: "Grafana",    Icon: Icon.Grafana,    color: "#F46800" },
         { name: "Nginx",      Icon: Icon.Nginx,      color: "#009639" },
-        { name: "Helm",       Icon: Icon.Helm,       color: "#277A9F" },
+        { name: "Helm",       Icon: Icon.Helm,       color: "#0F1689" },
+        { name: "Jenkins",    Icon: Icon.Jenkins,    color: "#D24939" },
+        { name: "Traefik",    Icon: Icon.Traefik,    color: "#24A1C1" },
       ],
     },
     {
-      label: "Full-Stack Dev", accent: C.cyan, tagline: "What I build every day",
+      label: t.skills.g2Label, accent: C.cyan, tagline: t.skills.g2Tagline,
       skills: [
         { name: "React.js",     Icon: Icon.React,      color: "#61DAFB" },
         { name: "React Native", Icon: Icon.React,      color: "#61DAFB" },
-        { name: "Node.js",      Icon: Icon.NodeJS,     color: "#339933" },
-        { name: "Angular",      Icon: Icon.Angular,    color: "#DD0031" },
+        { name: "Laravel",      Icon: Icon.Laravel,    color: "#FF2D20" },
+        { name: "Node.js",      Icon: Icon.NodeJS,     color: "#5FA04E" },
         { name: "Spring Boot",  Icon: Icon.SpringBoot, color: "#6DB33F" },
-        { name: "Express.js",   Icon: Icon.Express,    color: "#999"    },
+        { name: ".NET",         Icon: Icon.Dotnet,     color: "#512BD4" },
+        { name: "Angular",      Icon: Icon.Angular,    color: "#DD0031" },
+        { name: "Express.js",   Icon: Icon.Express,    color: "#E0E0E0" },
         { name: "Symfony",      Icon: Icon.Symfony,    color: "#ffffff" },
+        { name: "Flask",        Icon: Icon.Flask,      color: "#ffffff" },
+        { name: "Flutter",      Icon: Icon.Flutter,    color: "#02569B" },
         { name: "JavaFX",       Icon: Icon.JavaFX,     color: "#ED8B00" },
-        { name: "Flask",        Icon: Icon.Flask,      color: "#f0a830" },
-        { name: "Flutter",      Icon: Icon.Flutter,    color: "#54C5F8" },
+        { name: "Chart.js",     Icon: Icon.ChartJS,    color: "#FF6384" },
       ],
     },
     {
-      label: "Languages & Databases", accent: C.ember, tagline: "The foundation layer",
+      label: t.skills.g3Label, accent: C.ember, tagline: t.skills.g3Tagline,
       skills: [
-        { name: "Python",       Icon: Icon.Python,      color: "#FFD845" },
-        { name: "C / C++",      Icon: Icon.CPP,         color: "#00427C" },
+        { name: "Python",       Icon: Icon.Python,      color: "#3776AB" },
+        { name: "C#",           Icon: Icon.Csharp,      color: "#239120" },
+        { name: "TypeScript",   Icon: Icon.TypeScript,  color: "#3178C6" },
+        { name: "JavaScript",   Icon: Icon.JavaScript,  color: "#F7DF1E" },
         { name: "PHP",          Icon: Icon.PHP,         color: "#777BB3" },
-        { name: "MongoDB",      Icon: Icon.MongoDB,     color: "#13AA52" },
-        { name: "MySQL",        Icon: Icon.MySQL,       color: "#00618A" },
+        { name: "C / C++",      Icon: Icon.CPP,         color: "#00599C" },
+        { name: "Java",         Icon: Icon.Java,        color: "#007396" },
+        { name: "PostgreSQL",   Icon: Icon.PostgreSQL,  color: "#4169E1" },
+        { name: "Redis",        Icon: Icon.Redis,       color: "#DC382D" },
+        { name: "MongoDB",      Icon: Icon.MongoDB,     color: "#47A248" },
+        { name: "MySQL",        Icon: Icon.MySQL,       color: "#4479A1" },
         { name: "Oracle DB",    Icon: Icon.OracleDB,    color: "#F80000" },
         { name: "Firebase",     Icon: Icon.Firebase,    color: "#FFCA28" },
-        { name: "Scikit-learn", Icon: Icon.ScikitLearn, color: "#F89939" },
-        { name: "Arduino",      Icon: Icon.Arduino,     color: "#00979D" },
       ],
     },
     {
-      label: "Tools & Methods", accent: C.sage, tagline: "How I work",
+      label: t.skills.g4Label, accent: C.sage, tagline: t.skills.g4Tagline,
       skills: [
-        { name: "Git / GitHub", Icon: Icon.Git,    color: "#F05032" },
-        { name: "Figma",        Icon: Icon.Figma,  color: "#1ABCFE" },
-        { name: "Postman",      Icon: Icon.Postman, color: "#FF6C37" },
-        { name: "Claude API",   Icon: Icon.Claude, color: "#CC785C" },
+        { name: "Scikit-learn", Icon: Icon.ScikitLearn, color: "#F7931E" },
+        { name: "Pandas",       Icon: Icon.Pandas,      color: "#150458" },
+        { name: "NumPy",        Icon: Icon.NumPy,       color: "#013243" },
+        { name: "XGBoost",      Icon: Icon.XGBoost,     color: "#226496" },
+        { name: "Git / GitHub", Icon: Icon.Git,        color: "#F05032" },
+        { name: "Figma",        Icon: Icon.Figma,      color: "#F24E1E" },
+        { name: "Postman",      Icon: Icon.Postman,    color: "#FF6C37" },
+        { name: "Arduino",      Icon: Icon.Arduino,     color: "#00979D" },
+        { name: "Claude API",   Icon: Icon.Claude,      color: "#CC785C" },
       ],
     },
   ];
 
-  const marqueeItems1 = ["JavaScript ✦", "TypeScript ✦", "Java ✦", "Dart ✦", "HTML5/CSS3 ✦", "SQL ✦", "Bash ✦", "C / C++ ✦", "Python ✦"];
-  const marqueeItems2 = ["Git/GitHub ✦", "Postman ✦", "Figma ✦", "Draw.io ✦", "UML ✦", "Agile/Scrum ✦", "Helm ✦", "Heat Templates ✦", "JWT/BCrypt ✦"];
+  const marqueeItems1 = ["Laravel 13 ✦", "React 19 ✦", ".NET ✦", "C# ✦", "TypeScript ✦", "Python ✦", "Java ✦", "PHP ✦", "Dart ✦", "SQL ✦", "C / C++ ✦"];
+  const marqueeItems2 = ["AWS ✦", "K3s / K8s ✦", "Traefik ✦", "cert-manager ✦", "Jenkins CI/CD ✦", "Sanctum ✦", "PostgreSQL ✦", "Redis ✦", "Git/GitHub ✦", "Postman ✦", "Agile/Scrum ✦"];
 
   return (
     <section id="skills" className="relative z-10 px-4 sm:px-8 md:px-14 pt-10 pb-24 overflow-hidden">
@@ -1052,12 +1250,12 @@ function Skills() {
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.7 }}
           className="flex items-center gap-4 mb-2">
-          <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(48px,8vw,96px)", color: C.text, lineHeight: 1 }}>Skills</h2>
+          <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(48px,8vw,96px)", color: C.text, lineHeight: 1 }}>{t.skills.title}</h2>
           <motion.span animate={{ rotate: [0, 360] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
             style={{ fontSize: 28, color: C.gold, display: "inline-block" }}>☸</motion.span>
         </motion.div>
         <p className="mb-14 text-[10px] tracking-[0.22em] uppercase" style={{ color: C.textSub }}>
-          Tools I build with every day ✦
+          {t.skills.tagline}
         </p>
 
         <div className="space-y-12">
@@ -1072,7 +1270,7 @@ function Skills() {
                   style={{ background: group.accent, boxShadow: `0 0 8px ${group.accent}` }} />
                 <h3 className="text-[11px] tracking-[0.24em] uppercase font-bold" style={{ color: group.accent }}>{group.label}</h3>
                 <span className="text-[10px] hidden sm:block" style={{ color: C.textSub }}>— {group.tagline}</span>
-                <div className="flex-1 h-px ml-1" style={{ background: "rgba(255,255,255,0.04)" }} />
+                <div className="flex-1 h-px ml-1" style={{ background: dark ? "rgba(255,255,255,0.08)" : "rgba(184,115,14,0.22)" }} />
               </div>
               <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9 gap-2.5">
                 {group.skills.map((skill, si) => <SkillPill key={skill.name} skill={skill} index={gi * 10 + si} />)}
@@ -1083,11 +1281,11 @@ function Skills() {
 
         <div className="mt-14 space-y-5">
           <div>
-            <p className="mb-3 text-[11px] tracking-[0.2em] uppercase font-bold" style={{ color: C.cyan }}>Languages</p>
+            <p className="mb-3 text-[11px] tracking-[0.2em] uppercase font-bold" style={{ color: C.cyan }}>{t.skills.marquee1Title}</p>
             <Marquee items={marqueeItems1} color={C.cyan} />
           </div>
           <div>
-            <p className="mb-3 text-[11px] tracking-[0.2em] uppercase font-bold" style={{ color: C.ember }}>Tools & Methods</p>
+            <p className="mb-3 text-[11px] tracking-[0.2em] uppercase font-bold" style={{ color: C.ember }}>{t.skills.marquee2Title}</p>
             <Marquee items={marqueeItems2} color={C.ember} />
           </div>
         </div>
@@ -1132,7 +1330,7 @@ function TimelineItem({ item, index }) {
 
 /* ─── DEPLOY DASHBOARD ───────────────────────────────────────── */
 function DeployDashboard() {
-  const { dark, C } = useTheme();
+  const { dark, C, t } = useTheme();
   return (
     <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       className="relative z-10 w-full max-w-[360px]"
@@ -1145,7 +1343,7 @@ function DeployDashboard() {
           <span className="w-3 h-3 rounded-full" style={{ background: "#ffbd2e" }} />
           <span className="w-3 h-3 rounded-full" style={{ background: "#28c840" }} />
         </div>
-        <span style={{ fontFamily: "monospace", fontSize: 10, color: `${C.gold}77`, letterSpacing: "0.1em" }}>kubectl deploy --prod</span>
+        <span style={{ fontFamily: "monospace", fontSize: 10, color: `${C.gold}77`, letterSpacing: "0.1em" }}>{t.experience.dashboardDeploy}</span>
         <motion.span animate={{ opacity: [1,0,1] }} transition={{ duration: 1.2, repeat: Infinity }}
           style={{ width: 6, height: 6, borderRadius: "50%", background: C.sage, display: "inline-block", boxShadow: `0 0 8px ${C.sage}` }} />
       </div>
@@ -1175,10 +1373,10 @@ function DeployDashboard() {
 
       <div className="mx-5 mb-2">
         <div className="flex justify-between mb-1">
-          <span style={{ fontSize: 9, color: `${C.gold}88`, fontFamily: "monospace", letterSpacing: "0.1em" }}>DEPLOYMENT PROGRESS</span>
+          <span style={{ fontSize: 9, color: `${C.gold}88`, fontFamily: "monospace", letterSpacing: "0.1em" }}>{t.experience.dashboardProgress}</span>
           <span style={{ fontSize: 9, color: C.sage, fontFamily: "monospace", fontWeight: 700 }}>100%</span>
         </div>
-        <div className="rounded-full overflow-hidden" style={{ height: 4, background: "rgba(255,255,255,0.06)" }}>
+        <div className="rounded-full overflow-hidden" style={{ height: 4, background: dark ? "rgba(255,255,255,0.08)" : "rgba(184,115,14,0.20)" }}>
           <motion.div initial={{ width: 0 }} whileInView={{ width: "100%" }}
             viewport={{ once: true }} transition={{ duration: 1.8, delay: 0.5, ease: "easeOut" }}
             style={{ height: "100%", borderRadius: 99, background: `linear-gradient(90deg, ${C.gold}, ${C.sage})`, boxShadow: `0 0 8px ${C.gold}` }} />
@@ -1191,7 +1389,7 @@ function DeployDashboard() {
         <motion.div animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity }}
           style={{ width: 8, height: 8, borderRadius: "50%", background: C.sage, boxShadow: `0 0 12px ${C.sage}`, flexShrink: 0 }} />
         <div>
-          <p style={{ fontFamily: "monospace", fontSize: 11, color: C.sage, fontWeight: 700, letterSpacing: "0.06em" }}>LIVE IN PRODUCTION</p>
+          <p style={{ fontFamily: "monospace", fontSize: 11, color: C.sage, fontWeight: 700, letterSpacing: "0.06em" }}>{t.experience.dashboardLive}</p>
           <p style={{ fontFamily: "monospace", fontSize: 9, color: C.textMuted, marginTop: 2 }}>uptime: 99.97% · latency: 12ms</p>
         </div>
       </motion.div>
@@ -1201,28 +1399,34 @@ function DeployDashboard() {
 
 /* ─── EXPERIENCE ─────────────────────────────────────────────── */
 function Experience() {
-  const { C } = useTheme();
+  const { C, t } = useTheme();
 
   const experiences = [
     {
-      year: "2025", period: "Jul – Aug", tag: "Professional Experience",
-      title: "Intern — Full-Stack Developer", subtitle: "Catalyze Tech · FitLife Platform",
-      text: "Designed and delivered a full sports & nutrition coaching app in 6 weeks. Built a multi-role React Native mobile app, React.js admin dashboard, and secure Node.js/Express REST API. Deployed full stack on Azure Linux VM with Docker & Nginx.",
+      year: "2026", period: "Jul – Aug", tag: t.experience.exp1Tag,
+      title: t.experience.exp1Title, subtitle: t.experience.exp1Sub,
+      text: t.experience.exp1Text,
+      accent: C.sage,
+    },
+    {
+      year: "2025", period: "Jul – Aug", tag: t.experience.exp2Tag,
+      title: t.experience.exp2Title, subtitle: t.experience.exp2Sub,
+      text: t.experience.exp2Text,
       accent: C.gold,
     },
   ];
 
   const education = [
     {
-      year: "2023", period: "– Present", tag: "Engineering Degree",
-      title: "Cloud Computing Engineering (2nd year)", subtitle: "ESPRIT, Tunis",
-      text: "Hands-on curriculum in cloud-native infrastructure, DevOps automation, full-stack development, AI integrations, and systems programming. Building real-world projects every semester.",
+      year: "2023", period: "– Present", tag: t.experience.edu1Tag,
+      title: t.experience.edu1Title, subtitle: t.experience.edu1Sub,
+      text: t.experience.edu1Text,
       accent: C.cyan,
     },
     {
-      year: "2021", period: "– 2022", tag: "Secondary Education",
-      title: "Scientific Baccalaureate", subtitle: "",
-      text: "Graduated with a scientific baccalaureate — the foundation for engineering studies.",
+      year: "2021", period: "– 2022", tag: t.experience.edu2Tag,
+      title: t.experience.edu2Title, subtitle: t.experience.edu2Sub,
+      text: t.experience.edu2Text,
       accent: C.champagne,
     },
   ];
@@ -1240,17 +1444,17 @@ function Experience() {
             <motion.div initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }} transition={{ duration: 0.7 }}
               className="flex items-center gap-3 mb-2 flex-wrap">
-              <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(36px,6vw,72px)", color: C.text, lineHeight: 1 }}>Experience</h2>
+              <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(36px,6vw,72px)", color: C.text, lineHeight: 1 }}>{t.experience.title}</h2>
               <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}>
                 <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2M8 11h.01M12 11h.01M16 11h.01"/>
               </svg>
             </motion.div>
-            <p className="text-[10px] tracking-[0.22em] uppercase mb-8" style={{ color: C.textSub }}>Real-world work</p>
+            <p className="text-[10px] tracking-[0.22em] uppercase mb-8" style={{ color: C.textSub }}>{t.experience.tagline}</p>
             <div className="relative">
               <div className="absolute left-[72px] sm:left-[87px] top-3 bottom-2 w-[2px] rounded-full"
                 style={{ background: `linear-gradient(to bottom, ${C.gold}, ${C.gold}22)`, boxShadow: `0 0 10px ${C.gold}44` }} />
               <div className="space-y-8">
-                {experiences.map((item, i) => <TimelineItem key={item.title} item={item} index={i} />)}
+                {experiences.map((item, i) => <TimelineItem key={`${item.title}-${i}`} item={item} index={i} />)}
               </div>
             </div>
           </div>
@@ -1259,17 +1463,17 @@ function Experience() {
             <motion.div initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }} transition={{ duration: 0.7 }}
               className="flex items-center gap-3 mb-2 flex-wrap">
-              <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(36px,6vw,72px)", color: C.text, lineHeight: 1 }}>Education</h2>
+              <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(36px,6vw,72px)", color: C.text, lineHeight: 1 }}>{t.experience.eduTitle}</h2>
               <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke={C.cyan} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}>
                 <path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/>
               </svg>
             </motion.div>
-            <p className="text-[10px] tracking-[0.22em] uppercase mb-8" style={{ color: C.textSub }}>Academic background</p>
+            <p className="text-[10px] tracking-[0.22em] uppercase mb-8" style={{ color: C.textSub }}>{t.experience.eduTagline}</p>
             <div className="relative">
               <div className="absolute left-[72px] sm:left-[87px] top-3 bottom-2 w-[2px] rounded-full"
                 style={{ background: `linear-gradient(to bottom, ${C.cyan}, ${C.champagne}55)`, boxShadow: `0 0 10px ${C.cyan}44` }} />
               <div className="space-y-8">
-                {education.map((item, i) => <TimelineItem key={item.title} item={item} index={i} />)}
+                {education.map((item, i) => <TimelineItem key={`${item.title}-${i}`} item={item} index={i} />)}
               </div>
             </div>
           </div>
@@ -1285,13 +1489,13 @@ function Experience() {
             className="absolute top-4 right-0 z-20 px-4 py-3 rounded-2xl"
             style={{ background: `${C.ember}15`, border: `1.5px solid ${C.ember}55`, boxShadow: `0 8px 24px rgba(0,0,0,0.3), 0 0 20px ${C.ember}18` }}>
             <p style={{ fontFamily: "'Caveat', cursive", fontSize: 28, color: C.ember, lineHeight: 1, textAlign: "center" }}>9+</p>
-            <p style={{ fontSize: 9, color: C.textMuted, textAlign: "center", letterSpacing: "0.12em", marginTop: 2 }}>PROJECTS</p>
+            <p style={{ fontSize: 9, color: C.textMuted, textAlign: "center", letterSpacing: "0.12em", marginTop: 2 }}>{t.experience.statProjects}</p>
           </motion.div>
           <motion.div animate={{ y: [0, -8, 0], rotate: [-4, -2, -4] }} transition={{ duration: 5, repeat: Infinity, delay: 0.8 }}
             className="absolute bottom-4 right-0 z-20 px-4 py-3 rounded-2xl"
             style={{ background: `${C.sage}15`, border: `1.5px solid ${C.sage}55`, boxShadow: `0 8px 24px rgba(0,0,0,0.3), 0 0 20px ${C.sage}18` }}>
             <p style={{ fontFamily: "'Caveat', cursive", fontSize: 28, color: C.sage, lineHeight: 1, textAlign: "center" }}>∞</p>
-            <p style={{ fontSize: 9, color: C.textMuted, textAlign: "center", letterSpacing: "0.12em", marginTop: 2 }}>CURIOSITY</p>
+            <p style={{ fontSize: 9, color: C.textMuted, textAlign: "center", letterSpacing: "0.12em", marginTop: 2 }}>{t.experience.statCuriosity}</p>
           </motion.div>
         </motion.div>
       </div>
@@ -1301,7 +1505,7 @@ function Experience() {
 
 /* ─── CONTACT ────────────────────────────────────────────────── */
 function Contact() {
-  const { dark, C } = useTheme();
+  const { dark, C, t } = useTheme();
   const [cursorColor, setCursorColor] = useState(C.gold);
   const [cursorVisible, setCursorVisible] = useState(false);
 
@@ -1330,12 +1534,12 @@ function Contact() {
             viewport={{ once: true }} transition={{ duration: 0.7 }}
             className="lg:col-span-5 relative">
             <h2 style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(40px,7vw,88px)", color: C.text, lineHeight: 1 }}>
-              Let's Connect{" "}
+              {t.contact.title}{" "}
               <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}
                 style={{ color: C.gold, display: "inline-block" }}>♡</motion.span>
             </h2>
             <p className="text-[11px] tracking-[0.22em] uppercase mt-2 mb-8" style={{ color: C.textSub }}>
-              Let's build something amazing together.
+              {t.contact.tagline}
             </p>
             <div className="space-y-3">
               {socials.map((s, i) => (
@@ -1363,7 +1567,7 @@ function Contact() {
             </div>
             <motion.div animate={{ x: [0, 6, 0] }} transition={{ duration: 5, repeat: Infinity }}
               style={{ fontFamily: "'Caveat', cursive", fontSize: 26, marginTop: 28, color: `${C.gold}55`, transform: "rotate(-2deg)" }}>
-              Don't be a stranger ⌁♡
+              {t.contact.strangerText}
             </motion.div>
           </motion.div>
 
@@ -1391,21 +1595,21 @@ function Contact() {
                 <motion.p animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
                   transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
                   style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(34px,5vw,52px)", lineHeight: 1.05,
-                    background: `linear-gradient(120deg, ${C.gold}, ${C.champagne}, ${C.cyan}, ${C.gold})`,
+                    backgroundImage: `linear-gradient(120deg, ${C.gold}, ${C.champagne}, ${C.cyan}, ${C.gold})`,
                     backgroundSize: "200% 200%",
                     backgroundClip: "text",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                    textShadow: `0 0 20px ${C.gold}33`, marginBottom: 6 }}>
-                  Let's build<br />something<br />remarkable.
+                    textShadow: dark ? `0 0 20px ${C.gold}33` : "none", marginBottom: 6, whitespace: "pre-line" }}>
+                  {t.contact.cardTitle}
                 </motion.p>
                 <p style={{ fontSize: 11, color: C.textSub, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 28, fontFamily: "'Inter', sans-serif" }}>
-                  open to opportunities · 2026
+                  {t.contact.cardSub}
                 </p>
                 <div style={{ display: "flex", gap: 12, marginBottom: 28 }}>
                   {[
-                    { val: "9+", label: "Projects",   color: C.gold  },
-                    { val: "1",  label: "Internship",  color: C.ember },
-                    { val: "∞",  label: "Drive",       color: C.sage  },
+                    { val: "9+", label: t.contact.statProjects,   color: C.gold  },
+                    { val: "2",  label: t.contact.statInternships,color: C.ember },
+                    { val: "∞",  label: t.contact.statDrive,      color: C.sage  },
                   ].map((stat, i) => (
                     <motion.div key={i} whileHover={{ scale: 1.06, y: -3 }}
                       style={{ flex: 1, borderRadius: 14, padding: "12px 8px", textAlign: "center",
@@ -1442,7 +1646,7 @@ function Contact() {
 
 /* ─── FOOTER ─────────────────────────────────────────────────── */
 function Footer() {
-  const { C } = useTheme();
+  const { C, t } = useTheme();
   return (
     <footer className="relative z-10 mt-24 pb-12 pt-8">
       <div className="absolute inset-0 pointer-events-none"
@@ -1452,9 +1656,9 @@ function Footer() {
           style={{ background: `linear-gradient(to right, transparent, ${C.gold}66, transparent)` }} />
         <motion.p animate={{ opacity: [0.4, 0.85, 0.4] }} transition={{ duration: 4, repeat: Infinity }}
           style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(26px,5vw,46px)", color: `${C.gold}88` }}>
-          Build. Deploy. Impact. ♡
+          {t.footer.slogan}
         </motion.p>
-        <p className="mt-4 text-sm tracking-wide" style={{ color: C.textSub }}>Thanks for stopping by ✦</p>
+        <p className="mt-4 text-sm tracking-wide" style={{ color: C.textSub }}>{t.footer.thanks}</p>
         <p style={{ fontFamily: "'Caveat', cursive", marginTop: 24, fontSize: 24, color: C.textMuted }}>— Yomna</p>
         <p className="mt-8 text-[11px] uppercase tracking-[0.25em]" style={{ color: C.textSub }}>© 2026 Yomna Bouallegue</p>
       </div>
@@ -1465,7 +1669,9 @@ function Footer() {
 /* ─── ROOT APP ───────────────────────────────────────────────── */
 export default function App() {
   const [dark, setDark] = useState(true);
+  const [lang, setLang] = useState("EN");
   const C = dark ? DARK : LIGHT;
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.EN;
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -1477,7 +1683,7 @@ export default function App() {
   const gridLine = C.gridLine;
 
   return (
-    <ThemeContext.Provider value={{ dark, toggle: () => setDark(d => !d), C }}>
+    <ThemeContext.Provider value={{ dark, toggle: () => setDark(d => !d), lang, setLang, toggleLang: () => setLang(l => l === "EN" ? "FR" : "EN"), C, t }}>
       <main style={{ minHeight: "100vh", background: C.bg, color: C.text, fontFamily: "'Inter', sans-serif", overflowX: "hidden", transition: "background 0.4s, color 0.4s" }}>
         {/* Ambient radial glow */}
         <div style={{
