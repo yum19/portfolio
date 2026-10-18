@@ -804,7 +804,7 @@ function Hero() {
               {[
                 { Ic: Icon.LinkedIn, href: "https://www.linkedin.com/in/yomna-bouallegue-788731273/", label: "LinkedIn" },
                 { Ic: Icon.GitHub,   href: "https://github.com/yum19",                     label: "GitHub"   },
-                { Ic: Icon.Email,    href: "mailto:yomna.bouallegue@esprit.tn",                      label: "Email"    },
+                { Ic: Icon.Email,    href: "mailto:yomnabouallegue2468@gmail.com",                      label: "Email"    },
               ].map((s, i) => (
                 <motion.a key={i} href={s.href}
                   target={s.href.startsWith("mailto") ? undefined : "_blank"} rel="noreferrer"
@@ -1512,7 +1512,7 @@ function Contact() {
   const socials = [
     { IconComp: Icon.GitHub,   label: "GitHub",   handle: "github.com/yomnabouallegue",             href: "https://github.com/yum19",                       color: C.gold      },
     { IconComp: Icon.LinkedIn, label: "LinkedIn", handle: "yomna-bouallegue-787731273",              href: "https://www.linkedin.com/in/yomna-bouallegue-788731273/",   color: C.cyan      },
-    { IconComp: Icon.Email,    label: "Email",    handle: "yomna.bouallegue@esprit.tn",              href: "mailto:yomna.bouallegue@esprit.tn",                        color: C.sage      },
+    { IconComp: Icon.Email,    label: "Email",    handle: "yomnabouallegue2468@gmail.com",              href: "mailto:yomnabouallegue2468@gmail.com",                        color: C.sage      },
     { IconComp: Icon.Phone,    label: "Phone",    handle: "+216 26 847 647",                         href: "tel:+21626847647",                                         color: C.ember     },
   ];
 
@@ -1619,7 +1619,7 @@ function Contact() {
                     </motion.div>
                   ))}
                 </div>
-                <motion.a href="mailto:yomna.bouallegue@esprit.tn"
+                <motion.a href="mailto:yomnabouallegue2468@gmail.com"
                   whileHover={{ scale: 1.03, boxShadow: `0 0 32px ${C.gold}44` }}
                   whileTap={{ scale: 0.97 }}
                   style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
@@ -1629,7 +1629,7 @@ function Contact() {
                     color: C.gold, fontFamily: "'Inter', sans-serif", fontWeight: 800,
                     fontSize: 13, letterSpacing: "0.1em", transition: "all 0.3s" }}>
                   <motion.span animate={{ x: [0, 3, 0] }} transition={{ duration: 2, repeat: Infinity }}>→</motion.span>
-                  yomna.bouallegue@esprit.tn
+                  yomnabouallegue2468@gmail.com
                 </motion.a>
                 <motion.div animate={{ scaleX: [0.3, 1, 0.3], opacity: [0.3, 0.8, 0.3] }}
                   transition={{ duration: 3, repeat: Infinity }}
